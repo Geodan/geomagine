@@ -2,7 +2,7 @@
   "name": "geomagine",
   "homepage": "https://github.com/Geodan/geomagine",
   "authors": [
-  	"(Tom van Tilburg <tom.van.tilburg@geodan.nl)",
+    "(Tom van Tilburg <tom.van.tilburg@geodan.nl)",
     "(Rubio Vaughan <rubio.vaughan@geodan.nl>)",
     "(Steven Ottens <steven.ottens@geodan.nl>)"
   ],
@@ -22,6 +22,7 @@
     "tests"
   ],
   "dependencies": {
-    "pouchdb": "^5.4.5"
+    "pouchdb": "^5.4.5",
+    "pouchdb-find": "^0.10.3"
   }
 }

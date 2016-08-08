@@ -1,0 +1,83 @@
+<html>
+<head>
+<script src="../bower_components/pouchdb/dist/pouchdb.min.js"></script>
+<script src="../bower_components/pouchdb-find/dist/pouchdb.find.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+<body>
+
+
+<script>
+PouchDB.debug.enable('*');
+//PouchDB.debug.disable();
+//var db = new PouchDB('http://titania:5984/foobar');
+db.destroy('geomagine');
+var db = new PouchDB('geomagine');
+
+var rep = PouchDB.replicate('geomagine', 'http://titania:5984/foobar', {
+  live: true,
+  retry: true
+}).on('change', function (info) {
+  // handle change
+});
+
+
+var team = 0;
+var scenario = 0;
+
+String.prototype.hashCode = function() {
+  var hash = 0, i, chr, len;
+  if (this.length === 0) return hash;
+  for (i = 0, len = this.length; i < len; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+
+function new_session(name){
+	var session = name || 'testsession';
+	d3.json('properties.json',function(err,data){
+		if (err){
+			console.warn(err);
+		}
+		var bulk = [];
+		data.forEach(function(d){
+			var document = {
+				_id: (session+team+scenario).hashCode,
+				session: session,
+				team: team,
+				scenario: scenario,
+				content: d
+			}
+			bulk.push(document);
+		});
+		db.bulkDocs(bulk).then(function(m){
+			console.log(m);
+		}).catch(function(e){
+			console.warn(e);
+		});
+	});
+}
+
+function delete_session(name){
+	var session = name || 'testsession';
+	db.find({
+			selector: {session: session}
+	}).then(function (result) {
+		var bulk = result.rows.map(function(d){
+			d.doc._deleted = true;
+			return d;
+		});
+		db.bulkDocs(bulk).catch(function(err){
+			console.warn(err);
+		});
+	}).catch(function (err) {
+	  console.log(err);
+	});
+}
+
+
+</script>
+</body>

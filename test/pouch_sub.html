@@ -1,0 +1,21 @@
+<html>
+<head>
+<script src="//cdn.jsdelivr.net/pouchdb/5.4.5/pouchdb.min.js"></script>
+</head>
+<body>
+
+
+<script>
+var db = new PouchDB('http://titania:5984/foobar');
+
+db.changes({
+  since: 'now',
+  live: true,
+  include_docs: true
+}).on('change',function(change){
+	console.log(change);		
+});
+
+
+</script>
+</body>
