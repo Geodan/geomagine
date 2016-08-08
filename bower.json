@@ -1,0 +1,27 @@
+{
+  "name": "geomagine",
+  "homepage": "https://github.com/Geodan/geomagine",
+  "authors": [
+  	"(Tom van Tilburg <tom.van.tilburg@geodan.nl)",
+    "(Rubio Vaughan <rubio.vaughan@geodan.nl>)",
+    "(Steven Ottens <steven.ottens@geodan.nl>)"
+  ],
+  "description": "2D shell for geomagine game",
+  "main": "index.html",
+  "keywords": [
+    "geodan",
+    "serious",
+    "game"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "pouchdb": "^5.4.5"
+  }
+}
