@@ -96,7 +96,7 @@ Polymer({
             this._project.on('datachange', function() {
                 if (self._project.deleted()) {
                     // project closed
-                    self._project.on('datachange', null);
+                    self._project.off('datachange');
                     self._project = null;
                     self._waitForProject();
                     self.fire('projectclosed');
@@ -119,30 +119,36 @@ Polymer({
                 });
             }
             self._project = projects[0];
-
-            self._project.itemStore().on('datachange', function(){
-                self._itemsChanged();
-                if (self.self._checkProject()) {
-                    resolve();
-                }
-            });
-            // if the items were already loaded, the datachange above does not fire, so execute it just in case
             self._itemsChanged();
-            if (self._checkProject())
+            if (!self._project_ready_resolved && self._checkProject()) {
                 resolve();
-            return true;
-        }
-
-        self.project_ready = new Promise(function(reject, resolve){
-            if (!findProject(resolve)) {
-                // project is not yet loaded, wait for it...
-                self._cow.projectStore().on('datachange', function() {
-                    if (findProject(resolve)) {
-                        self._cow.projectStore().on('datachange', null); // disable event listener when project is found
+            } else {
+                self._project.itemStore().on('datachange', function () {
+                    self._itemsChanged();
+                    if (!self._project_ready_resolved && self._checkProject()) {
+                        resolve();
                     }
                 });
             }
+            return true;
+        }
+
+        self._project_ready_resolved = false;
+        self.project_ready = new Promise(function(reject, resolve){
+            resolve();
+            /*if (!findProject(resolve)) {
+                // project is not yet loaded, wait for it...
+                self._cow.projectStore().on('datachange', function() {
+                    if (findProject(resolve)) {
+                        self._cow.projectStore().off('datachange'); // disable event listener when project is found
+                    }
+                });
+            }*/
         });
+        self.project_ready.then(function(){
+            console.log('project_ready resolved');
+            self._project_ready_resolved = true;
+        })
     },
     _checkProject: function() {
         if (!this._project) return false;
