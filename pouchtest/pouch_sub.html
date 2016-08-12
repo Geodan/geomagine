@@ -5,7 +5,7 @@
 </head>
 <body>
 
-<div id="idlist">
+<div id="items">
 </div>
 
 <script>
@@ -16,10 +16,23 @@ db.changes({
   live: true,
   include_docs: true
 }).on('change',function(change){
-	d3.
+	refresh_ui();
 	console.log(change);		
 });
 
+function refresh_ui(){
+	db.allDocs({
+		include_docs: true
+	}).then(function(data){
+		var items = d3.select("#items").selectAll('.item').data(data.rows,function(d){return d.id;});
+		items.enter().append('div')
+			.classed('item',true)
+			.text(function(d){return d.doc.session+d.id;});
+		items.exit().remove();
+	});
+
+}
+refresh_ui();
 
 </script>
 </body>
