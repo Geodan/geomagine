@@ -46,7 +46,7 @@ Polymer({
             value: 0,
             notify: true
         },
-        readyPromise: {
+        project_ready: {
             type: Object
         },
         _cow: {
@@ -68,21 +68,7 @@ Polymer({
         if (!this._cow) return;
         console.log('_cowChanged');
 
-        var self = this;
-        this._cow.projectStore().on('datachange', function() {
-            var projects = self._cow.projects().filter(function (d) {
-                return !d.deleted();
-            });
-            if (projects.length === 0) {
-                self._reset();
-                return;
-            } else if (projects.length > 1) {
-                projects.sort(function (a, b) {
-                    return b.created() - a.created();
-                });
-            }
-            self._project = projects[0];
-        });
+        this._waitForProject();
 
         /*this._cow.peerStore().on('datachange',function(){
             if (self.type !== 'tweedescherm') {
@@ -106,26 +92,62 @@ Polymer({
     _projectChanged: function() {
         this._reset();
         if (this._project) {
-            this._makeReadyPromise();
-        } else {
-            console.log('_projectChanged but no project set')
+            var self = this;
+            this._project.on('datachange', function() {
+                if (self._project.deleted()) {
+                    // project closed
+                    self._project.on('datachange', null);
+                    self._project = null;
+                    self._waitForProject();
+                    self.fire('projectclosed');
+                }
+            });
         }
     },
-    _makeReadyPromise: function() {
+    _waitForProject: function() {
         var self = this;
-        self.readyPromise = new Promise(function(reject, resolve){
+
+        function findProject(resolve) {
+            var projects = self._cow.projects().filter(function (d) {
+                return !d.deleted();
+            });
+            if (projects.length === 0) {
+                return false;
+            } else if (projects.length > 1) {
+                projects.sort(function (a, b) {
+                    return b.created() - a.created();
+                });
+            }
+            self._project = projects[0];
+
             self._project.itemStore().on('datachange', function(){
                 self._itemsChanged();
-                if (self._checkReady) resolve();
+                if (self.self._checkProject()) {
+                    resolve();
+                }
             });
             // if the items were already loaded, the datachange above does not fire, so execute it just in case
             self._itemsChanged();
-            if (self._checkReady) resolve();
+            if (self._checkProject())
+                resolve();
+            return true;
+        }
+
+        self.project_ready = new Promise(function(reject, resolve){
+            if (!findProject(resolve)) {
+                // project is not yet loaded, wait for it...
+                self._cow.projectStore().on('datachange', function() {
+                    if (findProject(resolve)) {
+                        self._cow.projectStore().on('datachange', null); // disable event listener when project is found
+                    }
+                });
+            }
         });
     },
-    _checkReady: function() {
-        if (!this._project || !this.team || !this.scenario) return false;
+    _checkProject: function() {
+        if (!this._project) return false;
 
+        return true; // TODO
         var project = this._project;
         var items = project.items();
         return items.filter(function(d) { return d.data('type') === 'scenario' }).length === project.data('numScenarios') &&
@@ -186,7 +208,7 @@ Polymer({
     },
     _teamChanged: function(team, _project) {
         var self = this;
-        this.readyPromise.then(function() {
+        this.project_ready.then(function() {
             self._reset();
 
             if (self.team && self.type !== 'tweedescherm') {
@@ -209,7 +231,7 @@ Polymer({
     },
     _scenarioChanged: function(scenario, _project) {
         var self = this;
-        this.readyPromise.then(function() {
+        this.project_ready.then(function() {
             console.log('_scenarioChanged: ' + scenario);
             self._reset();
 
@@ -233,7 +255,7 @@ Polymer({
     },
     _typeChanged: function(type, _project) {
         var self = this;
-        this.readyPromise.then(function() {
+        this.project_ready.then(function() {
             console.log('_typeChanged: ' + progress);
             self._cow.peer().data('type', self.type);
         });
@@ -241,7 +263,7 @@ Polymer({
     _progressChanged: function(progress, _project){
         if (this.type !== 'eerstescherm') return;
         var self = this;
-        this.readyPromise.then(function() {
+        this.project_ready.then(function() {
             console.log('_progressChanged: ' + progress);
             self._project.data('progress', progress).sync();
         });

@@ -6,7 +6,7 @@
                 id="instance"
                 team="{{team}}"
                 scenario="{{scenario}}"
-                readyPromise="{{instanceReady}}"
+                project_ready="{{project_ready}}"
         ></app-instance>
     </template>
 </dom-module>
@@ -15,8 +15,16 @@
     Polymer({
         is: 'instance-test',
         properties: {
-            instanceReady: {
-                type: Object
+            project_ready: {
+                type: Object,
+                observer: '_waitForProject'
+            }
+        },
+        _waitForProject: function() {
+            if (this.project_ready) {
+                this.project_ready.then(function(){
+                    console.log('project ready');
+                });
             }
         },
         attached: function () {
