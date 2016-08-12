@@ -1,0 +1,265 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="./gm-cow-core.html">
+<script src="../cowconfigs.js"></script>
+<dom-module id="app-instance">
+    <template>
+        <gm-cow-core id="cowcore" config="{{cowconfig}}" core="{{_cow}}"></gm-cow-core>
+    </template>
+</dom-module>
+<script>
+
+Polymer({
+    is: 'app-instance',
+    properties:{
+        kaartjes: {
+            type:Array,
+            value: function(){
+                return [];
+            },
+            notify: true
+        },
+        verbindingen: {
+            type: Array,
+            value: function(){
+                return [];
+            },
+            notify: true
+        },
+        eigenschappen: {
+            type: Array,
+            value: function(){
+                return [];
+            },
+            notify: true
+        },
+        team: {
+            type: String
+        },
+        scenario: {
+            type: String
+        },
+        type: {
+            type: String
+        },
+        progress: {
+            type: Number,
+            value: 0,
+            notify: true
+        },
+        readyPromise: {
+            type: Object
+        },
+        _cow: {
+            type: Object,
+            observer: '_cowChanged'
+        },
+        _project: {
+            type: Object,
+            observer: '_projectChanged'
+        }
+    },
+    observers: [
+        '_progressChanged(progress, _project)',
+        '_teamChanged(team, _project)',
+        '_scenarioChanged(scenario, _project)',
+        '_typeChanged(type, _project)'
+    ],
+    _cowChanged: function() {
+        if (!this._cow) return;
+        console.log('_cowChanged');
+
+        var self = this;
+        this._cow.projectStore().on('datachange', function() {
+            var projects = self._cow.projects().filter(function (d) {
+                return !d.deleted();
+            });
+            if (projects.length === 0) {
+                self._project = null;
+                return;
+            } else if (projects.length > 1) {
+                projects.sort(function (a, b) {
+                    return b.created() - a.created();
+                });
+            }
+            self._project = projects[0];
+        });
+
+        this._cow.peerStore().on('datachange',function(){
+            if (self.type !== 'tweedescherm') {
+                // TODO
+            }
+            /* Something in peerstore changed. Check to see which team is playing. */
+            //first get the correct peer
+            var peers = self.cow.peers().filter(d=> !d.deleted() && d.data('scenario') === self.scenario);
+            if (peers.length > 0)
+            //now see which team is connected to that peer
+                if (peers[0]){
+                    if (self.team && self.team !== peers[0].data('team'))
+                    //we have a team change. The project will be updated through the _projectChanged observer.
+                        self.team = peers[0].data('team');
+                }
+        });
+    },
+    /* _projectChanged: called when the _project property is changed, either at startup, or when the project is
+     * deleted and recreated after a bigreset
+     */
+    _projectChanged: function() {
+        this._reset();
+        if (this._project) {
+            this._makeReadyPromise();
+        } else {
+            console.log('_projectChanged but ')
+        }
+    },
+    _makeReadyPromise: function() {
+        var self = this;
+        self.readyPromise = new Promise(function(reject, resolve){
+            self._project.itemStore().on('datachange', function(){
+                self._itemsChanged();
+                if (self._checkReady) resolve();
+            });
+            // if the items were already loaded, the datachange above does not fire, so execute it just in case
+            self._itemsChanged();
+            if (self._checkReady) resolve();
+        });
+    },
+    _checkReady: function() {
+        if (!this._project || !this.team || !this.scenario) return false;
+
+        var project = this._project;
+        var items = project.items();
+        return items.filter(function(d) { return d.data('type') === 'scenario' }).length === project.data('numScenarios') &&
+                items.filter(function(d) { return d.data('type') === 'team' }).length === project.data('numTeams') &&
+                items.filter(function(d) { return d.data('type') === 'eigenschap' }).length === project.data('numEigenschappen') &&
+                items.filter(function(d) { return d.data('type') === 'kaartje' }).length === project.data('numKaartjes') &&
+                items.filter(function(d) { return d.data('type') === 'verbinding' }).length === project.data('numVerbindingen') &&
+                items.filter(function(d) { return d.data('type') === 'progress' }).length === project.data('numProgress');
+    },
+    _itemsChanged: function() {
+        var self = this;
+        if (!this._project || !this.team || !this.scenario)
+            return;
+
+        var myItems = self._project.items().filter(function(d){
+            return !d.deleted() && d.data('team') === self.team && d.data('scenario') === self.scenario;
+        });
+
+        self.eigenschappen = myItems.filter(function(d){
+            return d.data('type') === 'eigenschap';
+        });
+        // make sure Polymer listeners are triggered
+        self.eigenschappen.forEach(function(d,i){
+            self.set('eigenschappen.'+i+'._data.found',d.data('found'));
+        });
+        //TODO: maybe set the 'found' to false for every eigenschap
+
+        self.kaartjes = myItems.filter(function(d){
+            return d.data('type') === 'kaartje';
+        });
+        self.kaartjes.forEach(function(d,i){
+            self.set('kaartjes.'+i+'._data.x',d.data('x'));
+            self.set('kaartjes.'+i+'._data.y',d.data('y'));
+        });
+
+        self.verbindingen = myItems.filter(function(d){
+            return d.data('type')==='verbinding';
+        });
+        self.verbindingen.forEach(function(d,i){
+            self.set('verbindingen.'+i+'._data.vanid',d.data('vanid'));
+            self.set('verbindingen.'+i+'._data.naarid',d.data('naarid'));
+        });
+
+        if (self.type !== 'eerstescherm') {
+            var progress = myItems.filter(function (d) {
+                return d.data('type') === 'progress';
+            });
+            if (progress.length > 0) self.progress = progress[0];
+        }
+
+        self._calculateScore();
+    },
+    _reset: function() {
+        this.progress = 0;
+        this.kaartjes = [];
+        this.verbindingen = [];
+        this.eigenschappen = [];
+    },
+    _teamChanged: function(team, _project) {
+        var self = this;
+        this.readyPromise.then(function() {
+            self._reset();
+
+            if (self.team && self.type !== 'tweedescherm') {
+                var peers = self._cow.peers().filter(function (d) {
+                    return !d.deleted() && d.id() !== self._cow.peerid() &&
+                            d.data('type') !== 'tweedescherm' && d.data('user') === self.team;
+                });
+                if (peers.length > 0) {
+                    console.log('Team ' + self.team + ' is already playing on another peer');
+                    // TODO: handle duplicate team
+                    self.team = null;
+                    self._makeReadyPromise();
+                    return;
+                }
+            }
+
+            self._cow.user(self.team); // also updates peer.data('user')
+            self._itemsChanged();
+        });
+    },
+    _scenarioChanged: function(scenario, _project) {
+        var self = this;
+        this.readyPromise.then(function() {
+            console.log('_scenarioChanged: ' + scenario);
+            self._reset();
+
+            if (self.scenario && self.type === 'eerstescherm') {
+                var peers = self._cow.peers().filter(function (d) {
+                    return !d.deleted() && d.id() !== self._cow.peerid() &&
+                            d.data('type') === 'eerstescherm' && d.data('scenario') === self.scenario;
+                });
+                if (peers.length > 0) {
+                    console.log('There is another peer playing scenario ' + self.scenario);
+                    // TODO: handle duplicate scenario
+                    self.scenario = null;
+                    self._makeReadyPromise();
+                    return;
+                }
+            }
+
+            self._cow.peer().data('scenario', self.scenario).sync();
+            self._itemsChanged();
+        });
+    },
+    _typeChanged: function(type, _project) {
+        var self = this;
+        this.readyPromise.then(function() {
+            console.log('_typeChanged: ' + progress);
+            self._cow.peer().data('type', self.type);
+        });
+    },
+    _progressChanged: function(progress, _project){
+        if (this.type !== 'eerstescherm') return;
+        var self = this;
+        this.readyPromise.then(function() {
+            console.log('_progressChanged: ' + progress);
+            self._project.data('progress', progress).sync();
+        });
+    },
+    attached: function() {
+        console.log('app-instance attached');
+
+        // TODO this needs to be moved elsewhere
+        /*var syncarray = [
+            this.cow.userStore().synced,
+            this.cow.projectStore().synced,
+            this.cow.itemStore().synced
+        ];
+        Promise.all(syncarray).then(function(d){
+            console.log('instance ready');
+            self.ready = true;
+        });*/
+
+    }
+});
+</script>

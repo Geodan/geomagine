@@ -1,0 +1,29 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="./app-instance.html">
+<dom-module id="instance-test">
+    <template>
+        <app-instance
+                id="instance"
+                team="{{team}}"
+                scenario="{{scenario}}"
+                readyPromise="{{instanceReady}}"
+        ></app-instance>
+    </template>
+</dom-module>
+<script>
+
+    Polymer({
+        is: 'instance-test',
+        properties: {
+            instanceReady: {
+                type: Object
+            }
+        },
+        attached: function () {
+            //this.instanceReady.then(function(){
+            //    console.log('instance is ready');
+            //});
+        }
+    });
+
+</script>

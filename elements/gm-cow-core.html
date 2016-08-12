@@ -1,0 +1,76 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<script src="../bower_components/underscore/underscore.js"></script>
+<script src="../bower_components/cow/dist/cow.js"></script>
+
+<dom-module id="gm-cow-core">
+ <style>
+ </style>
+ <template>
+ <content>
+ </content>
+ </template>
+ 
+</dom-module>
+
+<script>
+var cow; //for debug
+Polymer({
+    is: 'gm-cow-core',
+    properties: {
+    	config: {
+    		type: Object,
+    		observer: '_configChanged'
+    	},
+    	core: {
+    		type: Object,
+    		notify: true
+    	},
+		project: {
+			type: Object,
+			notify: true
+		},
+    	connection: Object,
+		observers: [
+			'_configChanged(config)'
+		],
+	},
+    _configChanged: function(config){
+		console.log('gm-cow-core _configChanged');
+    	var core = new Cow.core({
+    		herdname: this.config.key, 
+    		maxage: 1000 * 60 * 60 * 10 * 1 //10 uur maxage
+    	}); 
+    	this.core = core;
+    	window.cow = core; //debug
+    	core.socketservers({
+    		_id: 'default', 
+    		data: {
+    			protocol:this.config.protocol,
+    			ip:this.config.url, 
+    			port:this.config.port,
+    			dir: this.config.dir
+    		}
+		});
+		core.socketserver('default');
+		this.connect();//todo: make optional
+    },
+    ready: function(){
+		console.log('gm-cow-core ready');
+    },
+    connect: function(){
+		console.log('gm-cow-core connect');
+		var self = this;
+		return this.core.connect().then(function(d){
+			//todo, add event;
+		}, function(e){
+			console.log('Connecting error', e);
+		});
+    },
+	_projectIdChanged: function() {
+		if (!this.core) {
+			console.log('Project ID set but cow not loaded', e);
+			return;
+		}
+	}
+});
+</script>
