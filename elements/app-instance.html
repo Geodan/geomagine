@@ -134,7 +134,7 @@ Polymer({
         }
 
         self._project_ready_resolved = false;
-        self.project_ready = new Promise(function(reject, resolve){
+        self.project_ready = new Promise(function(resolve, reject){
             resolve();
             /*if (!findProject(resolve)) {
                 // project is not yet loaded, wait for it...
