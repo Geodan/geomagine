@@ -74,7 +74,7 @@ Polymer({
                 return !d.deleted();
             });
             if (projects.length === 0) {
-                self._project = null;
+                self._reset();
                 return;
             } else if (projects.length > 1) {
                 projects.sort(function (a, b) {
@@ -84,11 +84,11 @@ Polymer({
             self._project = projects[0];
         });
 
-        this._cow.peerStore().on('datachange',function(){
+        /*this._cow.peerStore().on('datachange',function(){
             if (self.type !== 'tweedescherm') {
                 // TODO
             }
-            /* Something in peerstore changed. Check to see which team is playing. */
+            // Something in peerstore changed. Check to see which team is playing.
             //first get the correct peer
             var peers = self.cow.peers().filter(d=> !d.deleted() && d.data('scenario') === self.scenario);
             if (peers.length > 0)
@@ -98,7 +98,7 @@ Polymer({
                     //we have a team change. The project will be updated through the _projectChanged observer.
                         self.team = peers[0].data('team');
                 }
-        });
+        });*/
     },
     /* _projectChanged: called when the _project property is changed, either at startup, or when the project is
      * deleted and recreated after a bigreset
@@ -108,7 +108,7 @@ Polymer({
         if (this._project) {
             this._makeReadyPromise();
         } else {
-            console.log('_projectChanged but ')
+            console.log('_projectChanged but no project set')
         }
     },
     _makeReadyPromise: function() {
@@ -245,6 +245,9 @@ Polymer({
             console.log('_progressChanged: ' + progress);
             self._project.data('progress', progress).sync();
         });
+    },
+    ready: function() {
+        this.cowconfig = window.cowconfig;
     },
     attached: function() {
         console.log('app-instance attached');
