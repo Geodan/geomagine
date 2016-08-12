@@ -135,18 +135,17 @@ Polymer({
 
         self._project_ready_resolved = false;
         self.project_ready = new Promise(function(resolve, reject){
-            resolve();
-            /*if (!findProject(resolve)) {
+            if (!findProject(resolve)) {
+
                 // project is not yet loaded, wait for it...
                 self._cow.projectStore().on('datachange', function() {
                     if (findProject(resolve)) {
                         self._cow.projectStore().off('datachange'); // disable event listener when project is found
                     }
                 });
-            }*/
+            }
         });
         self.project_ready.then(function(){
-            console.log('project_ready resolved');
             self._project_ready_resolved = true;
         })
     },
@@ -216,6 +215,7 @@ Polymer({
         var self = this;
         this.project_ready.then(function() {
             self._reset();
+            console.log('_teamChanged');
 
             if (self.team && self.type !== 'tweedescherm') {
                 var peers = self._cow.peers().filter(function (d) {
@@ -226,7 +226,7 @@ Polymer({
                     console.log('Team ' + self.team + ' is already playing on another peer');
                     // TODO: handle duplicate team
                     self.team = null;
-                    self._makeReadyPromise();
+                    //self._makeReadyPromise();
                     return;
                 }
             }
