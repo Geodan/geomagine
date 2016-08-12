@@ -1,0 +1,73 @@
+<html>
+<head>
+
+
+
+</head>
+<body>
+
+<script src="../bower_components/underscore/underscore.js"></script>
+<script src="../bower_components/cow/dist/cow.js"></script>
+<script>
+var core = new Cow.core({
+ 		herdname: 'geomagine', 
+ 		maxage: 1000 * 60 * 60 * 10 * 1 //10 uur maxage
+}); 
+var curproject;
+core.socketservers({
+	_id: 'default', 
+	data: {
+		protocol:'wss',
+		ip:'websocket.geodan.nl', 
+		port:443,
+		dir: 'geomagine'
+	}
+});
+core.socketserver('default');
+core.connect();
+
+
+
+
+function checkcontent(resolve){
+	if (curproject.items().length > 0){
+		resolve();
+	}
+	else {
+		console.log('Not enough items yet');
+	}
+}
+
+function getproject(){
+	var projects = core.projects().filter(d=>!d.deleted());
+	
+	if ( projects.length> 1){
+		console.warn('More than 1 active project');
+	}
+	if ( projects.length< 1){
+		console.warn('No active project');
+	}
+	else {
+		var project = projects[0];
+		core.project(project.id());
+		if (!curproject || project.id() !== curproject.id()){
+			console.log('Project switch!',project.id());
+			curproject = project;
+			contentpromise = new Promise(function(resolve, reject){
+				checkcontent(resolve);
+				curproject.itemStore().on('datachange',function(){
+					checkcontent(resolve);
+				});
+			}).then(function(){
+				console.log('Project complete');
+			});
+		}
+	}
+}
+core.projectStore().on('datachange',getproject);
+
+</script>
+
+
+</body>
+</html>
