@@ -1,9 +1,12 @@
 <html>
 <head>
 <script src="//cdn.jsdelivr.net/pouchdb/5.4.5/pouchdb.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
 </head>
 <body>
 
+<div id="items">
+</div>
 
 <script>
 var db = new PouchDB('http://titania:5984/foobar');
@@ -13,9 +16,23 @@ db.changes({
   live: true,
   include_docs: true
 }).on('change',function(change){
+	refresh_ui();
 	console.log(change);		
 });
 
+function refresh_ui(){
+	db.allDocs({
+		include_docs: true
+	}).then(function(data){
+		var items = d3.select("#items").selectAll('.item').data(data.rows,function(d){return d.id;});
+		items.enter().append('div')
+			.classed('item',true)
+			.text(function(d){return d.doc.session+d.id;});
+		items.exit().remove();
+	});
+
+}
+refresh_ui();
 
 </script>
 </body>
