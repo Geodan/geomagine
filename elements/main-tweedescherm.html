@@ -1,0 +1,141 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="./app-instance.html">
+<script src="../cowconfigs.js"></script>
+<dom-module id="main-tweedescherm">
+    <template>
+		<style is="custom-style" include="iron-flex iron-flex-alignment">
+		  #eigenschappen {
+			
+			height: 344px;
+			width: 100%;
+		  }
+		
+		  #eigenschappen > paper-card {
+			box-sizing: border-box;
+			max-width: 184px;
+			margin: 4px;
+			flex: 0 0 auto;
+			font-size: 10pt;
+		  }
+		</style>
+        <gm-cow-core id="cowcore" config="[[cowconfig]]" core="{{_cow}}"></gm-cow-core>
+        <app-instance
+			id="instance"
+			cow="[[_cow]]"
+			team="{{team}}"
+			scenario="[[scenario]]"
+			projectname="{{projectname}}"
+			type="tweedescherm"
+			project_ready="{{project_ready}}"
+			eigenschappen="{{eigenschappen}}"
+        ></app-instance>
+        
+        <paper-dialog modal opened='[[waiting]]'>
+		  <h2>Paused</h2>
+		  <div>
+		  <paper-spinner alt="Loading contacts list" active></paper-spinner>
+		  Project is not (completely) loaded...
+		  </div>
+		</paper-dialog>
+		
+        <h4>Project: [[projectname]]</h4>
+        <div>
+			<paper-dropdown-menu label="Scenario">
+			  <paper-listbox class="dropdown-content" selected="{{scenario}}" attr-for-selected="name">
+				<template is="dom-repeat" items="[[scenarios]]">
+					<paper-item name="[[item]]">[[item]]</paper-item>
+				</template>
+			  </paper-listbox>
+			</paper-dropdown-menu>
+			
+			<paper-dropdown-menu label="Team">
+			  <paper-listbox class="dropdown-content" selected="{{team}}" attr-for-selected="name">
+				<template is="dom-repeat" items="[[teams]]">
+					<paper-item name="[[item]]">[[item]]</paper-item>
+				</template>
+			  </paper-listbox>
+			</paper-dropdown-menu>
+
+        </div>
+        
+        <div id="eigenschappen" class="layout horizontal wrap">
+			<template is="dom-repeat" items="[[eigenschappen]]" sort="_sortByTitle">
+				<paper-card heading="[[item._data.title]]" image="[[item._data.img]]" alt="image">
+					<div class="card-content">[[item._data.text]]</div>
+				</paper-card>
+			</template>
+        </div>
+    </template>
+</dom-module>
+<script>
+
+Polymer({
+	is: 'main-tweedescherm',
+	properties: {
+		project_ready: {
+			type: Object,
+			observer: '_waitForProject'
+		},
+		scenarios: {
+			type: Array,
+			value: function(){
+				return ['scenario1','scenario2','scenario3','scenario4'];
+			}				
+		},
+		teams: {
+			type: Array,
+			value: function(){
+				return ['team1','team2','team3','team4'];
+			}				
+		},
+		scenario: String,
+		team: String,
+		waiting: {
+			type: Boolean,
+			value: true
+		}
+	},
+	_waitForProject: function() {
+		var self =this;
+		this.waiting = true;
+		if (this.project_ready) {
+			this.project_ready.then(function(){
+				console.log('project ready');
+				self.team = 'team1';
+				self.scenario = 'scenario1';
+				self.waiting = false;
+				//self.projectcreated = new Date(self.project.created()).toISOString();
+			});
+		}
+	},
+	ready: function() {
+		this.cowconfig = window.cowconfig;
+		//this.$.instance.addEventListener('projectclosed',function(){
+		//	self._waitForProject();
+		//});
+	},
+	attached: function () {
+		//this.instanceReady.then(function(){
+		//    console.log('instance is ready');
+		//});
+	},
+	_sortByTitle: function(a,b){
+        	if (a.data('title') < b.data('title')){
+        		return -1;
+        	} else if (a.data('title') > b.data('title')){
+        		return 1;
+        	} else {
+        		return 0;
+        	}
+    },
+});
+
+</script>

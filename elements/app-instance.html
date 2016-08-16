@@ -13,6 +13,10 @@ Polymer({
             type: Object,
             observer: '_cowChanged'
         },
+        projectname: {
+        	type: String,
+        	notify: true
+        },
         team: {
             type: String,
             notify: true
@@ -94,6 +98,7 @@ Polymer({
         this._reset();
         if (this._project) {
             var self = this;
+            
             this._project.on('datachange', function() {
                 if (self._project.deleted()) {
                     // project closed
@@ -121,6 +126,7 @@ Polymer({
                 });
             }
             self._project = projects[0];
+            self.projectname = self._project.data('name') || 'unknown';
             self._itemsChanged();
             if (!self._project_ready_resolved && self._checkProject()) {
                 resolve();

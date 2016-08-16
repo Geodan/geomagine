@@ -26,6 +26,7 @@
     "pouchdb-find": "^0.10.3",
     "polymer": "^1.6.1",
     "cow": "^2.2.4",
-    "d3": "^4.2.1"
+    "d3": "^4.2.1",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7"
   }
 }

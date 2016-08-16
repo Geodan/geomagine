@@ -31,7 +31,7 @@ Polymer({
     		});
     	});
     },
-    newProject: function() {
+    newProject: function(projectname) {
         var self = this;
 
         console.log('starting project fill');
@@ -41,6 +41,7 @@ Polymer({
         this._cow.projectStore().loaded.then(function(){
             var project = self._cow.projects({}).sync();
             project.data({
+            		name: projectname || 'noname', 
             		numScenarios: scenarios.length,
                     numTeams: teams.length,
                     numEigenschappen: 0,
@@ -69,16 +70,26 @@ Polymer({
                 scenarios.forEach(function(scenario,i){
                     project.items({_id:protoid + counter++}).data('type', 'scenario').data('name', scenario).sync();
                     teams.forEach(function(team,j){
-                        project.items({_id:protoid + counter++}).data('type', 'progress')
-                                .data('scenario', scenario)
-                                .data('team', team)
-                                .data('value', 0).sync();
+                        project.items({_id:protoid + counter++})
+                        	.data({
+                        		type: 'progress',
+                                scenario: scenario,
+                                team: team,
+                                value: 0
+                            }).sync();
                         d3data.forEach(function(d,k){
-                            project.items({_id:protoid + counter++}).data('type', 'eigenschap')
-                                    .data('scenario', scenario)
-                                    .data('team', team)
-                                    .data('num', k)
-                                    .data('title', d.title).sync();
+                            project.items({_id:protoid + counter++})
+                            	.data({
+                            		type: 'eigenschap',
+                                    scenario: scenario,
+                                    team: team,
+                                    num: k,
+                                    title: d.title,
+                                    img: d.img,
+                                    place: d.place,
+                                    text: d.text[scenario],
+                                    found: false
+                                }).sync();
                         });
                     });
                 });

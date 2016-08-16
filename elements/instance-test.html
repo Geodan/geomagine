@@ -6,13 +6,13 @@
         <gm-cow-core id="cowcore" config="[[cowconfig]]" core="{{_cow}}"></gm-cow-core>
         <app-instance
                 id="instance"
-                cow=[[_cow]]
-                team=[[team]]
-                scenario=[[scenario]]
+                cow="[[_cow]]"
+                team="[[team]]"
+                scenario="[[scenario]]"
                 type="eerstescherm"
-                project_ready={{project_ready}}
-                eigenschappen={{eigenschappen}}
-                kaartjes={{kaartjes}}
+                project_ready="{{project_ready}}"
+                eigenschappen="{{eigenschappen}}"
+                kaartjes="{{kaartjes}}"
         ></app-instance>
         
         
@@ -24,7 +24,7 @@
         <div>
         Team: [[team]] <br>
         Scenario: [[scenario]]
-        Project ready: [[project_ready]]
+        
         
         <h3>Eigenschappen</h3>
         <template is="dom-repeat" items="[[eigenschappen]]">
@@ -40,34 +40,33 @@
 </dom-module>
 <script>
 
-    Polymer({
-        is: 'instance-test',
-        properties: {
-            project_ready: {
-                type: Object,
-                observer: '_waitForProject'
-            }
-        },
-        _waitForProject: function() {
-        	var self =this;
-            if (this.project_ready) {
-                this.project_ready.then(function(){
-                    console.log('project ready');
-                    self.team = 'team1';
-                    self.scenario = 'scenario1';
-                });
-                
-                
-            }
-        },
-        ready: function() {
-            this.cowconfig = window.cowconfig;
-        },
-        attached: function () {
-            //this.instanceReady.then(function(){
-            //    console.log('instance is ready');
-            //});
-        }
-    });
+Polymer({
+	is: 'instance-test',
+	properties: {
+		project_ready: {
+			type: Object,
+			observer: '_waitForProject'
+		}
+	},
+	_waitForProject: function() {
+		var self =this;
+		if (this.project_ready) {
+			this.project_ready.then(function(){
+				console.log('project ready');
+				self.team = 'team1';
+				self.scenario = 'scenario1';
+				//self.projectcreated = new Date(self.project.created()).toISOString();
+			});
+		}
+	},
+	ready: function() {
+		this.cowconfig = window.cowconfig;
+	},
+	attached: function () {
+		//this.instanceReady.then(function(){
+		//    console.log('instance is ready');
+		//});
+	}
+});
 
 </script>
