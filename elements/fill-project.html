@@ -1,0 +1,85 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="./gm-cow-core.html">
+<script src="../cowconfigs.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<dom-module id="fill-project">
+    <template>
+        <gm-cow-core id="cowcore" config="{{cowconfig}}" core="{{_cow}}"></gm-cow-core>
+    </template>
+</dom-module>
+<script>
+
+Polymer({
+    is: 'fill-project',
+    properties:{
+        _cow: {
+            type: Object,
+            observer: '_cowChanged'
+        }
+    },
+    observers: [
+    ],
+    _cowChanged: function() {
+        var self = this;
+
+        console.log('starting project fill');
+        var scenarios = ['scenario1', 'scenario2', 'scenario3', 'scenario4'];
+        var teams = ['team1', 'team2', 'team3', 'team4'];
+
+        this._cow.projectStore().loaded.then(function(){
+            var project = self._cow.projects({}).sync();
+
+            console.log('Filling new project...');
+            d3.json('./properties.json',function(err,d3data){
+                if (err){
+                    //console.warn('data length: ' + d3data.length);
+                    console.warn(err);
+                    return;
+                }
+                project.data('numScenarios', scenarios.length)
+                    .data('numTeams', teams.length)
+                    .data('numScenarios', scenarios.length)
+                    .data('numEigenschappen', scenarios.length * teams.length * d3data.length)
+                    .data('numKaartjes', 0)
+                    .data('numVerbindingen', 0)
+                    .data('numProgress', scenarios.length * teams.length).sync();
+
+                var counter = 0;
+                var protoid = new Date().getTime().toString();
+
+                teams.forEach(function(team,j) {
+                    project.items({_id: protoid + counter++}).data('type', 'team').data('name', team).sync();
+                });
+
+                scenarios.forEach(function(scenario,i){
+                    project.items({_id:protoid + counter++}).data('type', 'scenario').data('name', scenario).sync();
+                    teams.forEach(function(team,j){
+                        project.items({_id:protoid + counter++}).data('type', 'progress')
+                                .data('scenario', scenario)
+                                .data('team', team)
+                                .data('value', 0).sync();
+                        d3data.forEach(function(d,k){
+                            project.items({_id:protoid + counter++}).data('type', 'eigenschap')
+                                    .data('scenario', scenario)
+                                    .data('team', team)
+                                    .data('num', k)
+                                    .data('title', d.title).sync();
+                        });
+                    });
+                });
+                console.log('Finished filling project:');
+                console.log('scenarios: ' + project.items().filter(function(d){return d.data('type') === 'scenario'}).length + ' of ' + project.data('numScenarios'));
+                console.log('teams: ' + project.items().filter(function(d){return d.data('type') === 'team'}).length + ' of ' + project.data('numTeams'));
+                console.log('eigenschappen: ' + project.items().filter(function(d){return d.data('type') === 'eigenschap'}).length + ' of ' + project.data('numEigenschappen'));
+                console.log('kaartjes: ' + project.items().filter(function(d){return d.data('type') === 'kaartje'}).length + ' of ' + project.data('numKaartjes'));
+                console.log('verbindingen: ' + project.items().filter(function(d){return d.data('type') === 'verbinding'}).length + ' of ' + project.data('numVerbindingen'));
+                console.log('progress: ' + project.items().filter(function(d){return d.data('type') === 'progress'}).length + ' of ' + project.data('numProgress'));
+
+            });
+        });
+    },
+    ready: function() {
+        this.cowconfig = window.cowconfig;
+    },
+});
+</script>
