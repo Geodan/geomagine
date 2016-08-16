@@ -47,7 +47,8 @@ Polymer({
             notify: true
         },
         project_ready: {
-            type: Object
+            type: Object,
+            notify: true
         },
         _cow: {
             type: Object,
@@ -70,21 +71,24 @@ Polymer({
 
         this._waitForProject();
 
-        /*this._cow.peerStore().on('datachange',function(){
-            if (self.type !== 'tweedescherm') {
-                // TODO
-            }
-            // Something in peerstore changed. Check to see which team is playing.
-            //first get the correct peer
-            var peers = self.cow.peers().filter(d=> !d.deleted() && d.data('scenario') === self.scenario);
-            if (peers.length > 0)
-            //now see which team is connected to that peer
-                if (peers[0]){
-                    if (self.team && self.team !== peers[0].data('team'))
-                    //we have a team change. The project will be updated through the _projectChanged observer.
-                        self.team = peers[0].data('team');
-                }
-        });*/
+        var self = this;
+        if (this.type !== 'tweedescherm') {
+            this.project_ready.then(function () {
+                this._cow.peerStore().on('datachange', function () {
+                    var peers = self._cow.peers().filter(function (d) {
+                        return !d.deleted() && d.id() !== self._cow.peerid() &&
+                                d.data('type') === 'eerstescherm' && d.data('scenario') === self.scenario;
+                    });
+                    if (peers.length > 0) {
+                        console.log('Team ' + self.team + ' is already playing on another peer');
+                        // TODO: handle duplicate team
+                        self.team = null;
+                        return;
+                    }
+
+                });
+            });
+        }
     },
     /* _projectChanged: called when the _project property is changed, either at startup, or when the project is
      * deleted and recreated after a bigreset
@@ -98,6 +102,7 @@ Polymer({
                     // project closed
                     self._project.off('datachange');
                     self._project = null;
+                    console.log('Project closed, waiting for new project...');
                     self._waitForProject();
                     self.fire('projectclosed');
                 }
@@ -143,17 +148,25 @@ Polymer({
                     }
                 });
             }
-        });
-        self.project_ready.then(function(){
+        }).then(function(){
             self._project_ready_resolved = true;
         })
     },
     _checkProject: function() {
-        if (!this._project) return false;
+        if (!this._project) {
+            return false;
+        }
 
-        return true; // TODO
         var project = this._project;
         var items = project.items();
+
+        console.log('scenarios: ' + items.filter(function(d) { return d.data('type') === 'scenario' }).length + ' of ' + project.data('numScenarios'));
+        console.log('teams: ' + items.filter(function(d) { return d.data('type') === 'team' }).length + ' of ' + project.data('numTeams'));
+        console.log('eigenschappen: ' + items.filter(function(d) { return d.data('type') === 'eigenschap' }).length + ' of ' + project.data('numEigenschappen'));
+        console.log('kaartjes: ' + items.filter(function(d) { return d.data('type') === 'kaartje' }).length + ' of ' + project.data('numKaartjes'));
+        console.log('verbindingen: ' + items.filter(function(d) { return d.data('type') === 'verbinding' }).length + ' of ' + project.data('numVerbindingen'));
+        console.log('progress: ' + items.filter(function(d) { return d.data('type') === 'progress' }).length + ' of ' + project.data('numProgress'));
+
         return items.filter(function(d) { return d.data('type') === 'scenario' }).length === project.data('numScenarios') &&
                 items.filter(function(d) { return d.data('type') === 'team' }).length === project.data('numTeams') &&
                 items.filter(function(d) { return d.data('type') === 'eigenschap' }).length === project.data('numEigenschappen') &&
@@ -225,7 +238,6 @@ Polymer({
                     console.log('Team ' + self.team + ' is already playing on another peer');
                     // TODO: handle duplicate team
                     self.team = null;
-                    //self._makeReadyPromise();
                     return;
                 }
             }
@@ -249,7 +261,6 @@ Polymer({
                     console.log('There is another peer playing scenario ' + self.scenario);
                     // TODO: handle duplicate scenario
                     self.scenario = null;
-                    self._makeReadyPromise();
                     return;
                 }
             }
