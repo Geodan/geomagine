@@ -24,15 +24,7 @@ Polymer({
     	core: {
     		type: Object,
     		notify: true
-    	},
-		project: {
-			type: Object,
-			notify: true
-		},
-    	connection: Object,
-		observers: [
-			'_configChanged(config)'
-		],
+    	}
 	},
     _configChanged: function(config){
 		console.log('gm-cow-core _configChanged');
@@ -65,12 +57,6 @@ Polymer({
 		}, function(e){
 			console.log('Connecting error', e);
 		});
-    },
-	_projectIdChanged: function() {
-		if (!this.core) {
-			console.log('Project ID set but cow not loaded', e);
-			return;
-		}
-	}
+    }
 });
 </script>

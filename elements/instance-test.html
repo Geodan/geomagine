@@ -1,11 +1,14 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="./app-instance.html">
+<script src="../cowconfigs.js"></script>
 <dom-module id="instance-test">
     <template>
+        <gm-cow-core id="cowcore" config="[[cowconfig]]" core="{{_cow}}"></gm-cow-core>
         <app-instance
                 id="instance"
-                team="{{team}}"
-                scenario="{{scenario}}"
+                cow="[[_cow]]"
+                team="[[team]]"
+                scenario="[[scenario]]"
                 project_ready="{{project_ready}}"
         ></app-instance>
     </template>
@@ -26,6 +29,9 @@
                     console.log('project ready');
                 });
             }
+        },
+        ready: function() {
+            this.cowconfig = window.cowconfig;
         },
         attached: function () {
             //this.instanceReady.then(function(){
