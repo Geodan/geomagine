@@ -20,6 +20,18 @@ Polymer({
     observers: [
     ],
     _cowChanged: function() {
+    },
+    deleteProjects: function(){
+    	var self = this;
+    	this._cow.projectStore().loaded.then(function(){
+    		self._cow.projects().filter(function(d){
+    			return !d.deleted();
+    		}).forEach(function(d){
+    			d.deleted(true).sync();
+    		});
+    	});
+    },
+    newProject: function() {
         var self = this;
 
         console.log('starting project fill');
@@ -28,21 +40,24 @@ Polymer({
 
         this._cow.projectStore().loaded.then(function(){
             var project = self._cow.projects({}).sync();
-
+            project.data({
+            		numScenarios: scenarios.length,
+                    numTeams: teams.length,
+                    numEigenschappen: 0,
+                    numKaartjes: 0,
+                    numVerbindingen: 0,
+                    numProgress: scenarios.length * teams.length
+            }).sync();
             console.log('Filling new project...');
-            d3.json('./properties.json',function(err,d3data){
+            d3.json('../data/properties.json',function(err,d3data){
                 if (err){
                     //console.warn('data length: ' + d3data.length);
                     console.warn(err);
                     return;
                 }
-                project.data('numScenarios', scenarios.length)
-                    .data('numTeams', teams.length)
-                    .data('numScenarios', scenarios.length)
+                project
                     .data('numEigenschappen', scenarios.length * teams.length * d3data.length)
-                    .data('numKaartjes', 0)
-                    .data('numVerbindingen', 0)
-                    .data('numProgress', scenarios.length * teams.length).sync();
+                    .sync();
 
                 var counter = 0;
                 var protoid = new Date().getTime().toString();
@@ -67,15 +82,33 @@ Polymer({
                         });
                     });
                 });
-                console.log('Finished filling project:');
-                console.log('scenarios: ' + project.items().filter(function(d){return d.data('type') === 'scenario'}).length + ' of ' + project.data('numScenarios'));
-                console.log('teams: ' + project.items().filter(function(d){return d.data('type') === 'team'}).length + ' of ' + project.data('numTeams'));
-                console.log('eigenschappen: ' + project.items().filter(function(d){return d.data('type') === 'eigenschap'}).length + ' of ' + project.data('numEigenschappen'));
-                console.log('kaartjes: ' + project.items().filter(function(d){return d.data('type') === 'kaartje'}).length + ' of ' + project.data('numKaartjes'));
-                console.log('verbindingen: ' + project.items().filter(function(d){return d.data('type') === 'verbinding'}).length + ' of ' + project.data('numVerbindingen'));
-                console.log('progress: ' + project.items().filter(function(d){return d.data('type') === 'progress'}).length + ' of ' + project.data('numProgress'));
-
             });
+           var counter = 0;
+           var protoid = new Date().getTime().toString();
+           scenarios.forEach(function(scenario){
+           		d3.tsv('../data/'+scenario+'.tsv',function(err,data){
+           			if (err){
+						//console.warn('data length: ' + d3data.length);
+						console.warn(err);
+						return;
+					}
+           			project.data('numKaartjes',scenarios.length * teams.length * data.length).sync();
+           			data.forEach(function(d){
+						teams.forEach(function(team){
+							project.items({_id:protoid + counter++})
+								.data({
+									type: 'kaartje',
+									scenario: scenario,
+									team: team,
+									num: d.id,
+									title: d.name,
+									x_org: d.x,
+									y_org: d.y
+								}).sync();
+						});
+					});
+           		});
+           });
         });
     },
     ready: function() {

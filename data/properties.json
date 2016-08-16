@@ -1,0 +1,211 @@
+[{
+"title": "Base axis (steering)",
+    "img": "../../data/images/image10.png",
+    "place":"Utrecht",
+    "id": "Utrecht1",
+    "text": {
+        "scenario2":    "There is a broad societal consensus on topics that matter, such as climate change. The central institutions are strong.",
+        "scenario4":    "The central institutions are weak; solutions are produced by decentralized stakeholders. Large companies fulfil societal functions.",
+        "scenario3":    "There is a broad societal consensus on topics that matter, such as climate change. The central institutions are strong.",
+        "scenario1":    "The central institutions are weak; solutions are produced on a decentralized level by means of private initiatives and small companies."
+    }
+},{
+    "title":"City composition",
+    "img": "../../data/images/image12.png",
+    "place":"Almere",
+    "id":"Almere1",
+    "text": {
+        "scenario2":    "The city center is large, is carfree and has many highrise buildings. The city center is surrounded by large residential areas which are, compared to one another, uniformly planned and constructed.",
+        "scenario4":    "The city center shows a 24-hour economy with many office buildings. The city center is surrounded by qualitative, strongly differentiated, residential areas. A large number of projects are not completed.",
+        "scenario3":    "There is hardly any city center. Er bestaat nauwelijks een stadscentrum. Rather, the city consists of an ordered collection of smaller, uniform residential areas, separated by green/parks. These residential areas all have their own, fixed center and facilities (polycentric).",
+        "scenario1":    "There is hardly any city center. Characteristic is a manifold collection of smaller residential areas, each with an own character. Additionally, the city has traveling, mobile community centers (comparable to markets)."
+    }
+},{
+    "title":"Types of roads between the cities",
+    "img": "../../data/images/image15.png",
+    "place":"Tussengebied",
+    "id":"Tussengebied1",
+    "text": {
+        "scenario2":    "Gradually, the traditional broad road network is replaced by a small efficient road network for energy-saving, self-propelled vehicles.",
+        "scenario4":    "The landscape is characterized by various types of roads for motorized transport, from narrow to very wide, focusing on vehicles driven by humans.",
+        "scenario3":    "The landscape is characterized by narrow, new roads for electric cars. Crowded roads and traffic jams do not exist here because of smart pay-as-you-drive solutions per time zone.",
+        "scenario1":    "The landscape is characterized by narrowed, old roads with greenhouse farming along the sides of roads, replacing the asphalt which used to be there."
+    }
+},{
+    "title":"Character and usage of railroads between cities",
+    "img": "../../data/images/image14.png",
+    "place":"Tussengebied",
+    "id":"Tussengebied2",
+    "text": {
+        "scenario2":    "The railway network has been modernized, the time schedule has been intensified and the usage of the railway network has strongly grown.",
+        "scenario4":    "Compared to the previous decennium, the railway network has stayed intact, without much densification or expansion.",
+        "scenario3":    "The railway network has strongly grown. There are broad, diversified railway systems for (ultra-)high-speed railway, Intercity, local trains, subway and tram.",
+        "scenario1":    "A large part of the commuting railway traffic has become unnecessary. Commuters choose their own, innovative, personal means of transport."
+    }
+},{
+    "title":"Water system",
+    "img": "../../data/images/image18.png",
+    "place":"Amsterdam",
+    "id":"Amsterdam1",
+    "text": {
+        "scenario2":    "Adapting to climate change, dikes are heightened.",
+        "scenario4":    "Many areas are regularyl flooded because of the lack of central choices.",
+        "scenario3":    "Extra space for water as an adaptation measure, with floating gardens (with attention paid to the production of food and raw materials, e.g. by means of algae) and floating solar panels.",
+        "scenario1":    "Many residential areas choose their own local solutions to dealing with flood risks; differing from living on mounds to extra dikes or vertical evacuation."
+    }
+},{
+    "title":"Ring roads around cities",
+    "img": "../../data/images/image19.png",
+    "place":"Utrecht",
+    "id":"Utrecht2",
+    "text": {
+        "scenario2":    "The ring roads are placed underground, with a seamless connection to distribution centers on the edge of the city.",
+        "scenario4":    "Ring roads are nearly always full; companies develop private toll routes for a good, customized traffic flow.",
+        "scenario3":    "The ring roads have been dismantled and, when necessary, replaced by high-tech public transport and cycling highways.",
+        "scenario1":    "Big parts of the ring roads have fallen into abeyance  disuse and are taken over by other activities (often food- and trade-related), but also used as festival area."
+    }
+},{
+    "title":"Road types in the cities",
+    "img": "../../data/images/image13.png",
+    "place":"Almere",
+    "id":"Almere2",
+    "text": {
+        "scenario2":    "In the cities we find a fine-grained network of rail roads, cycling paths and walking routes, renewed and well maintained.",
+        "scenario4":    "In the city we find a coarse, extensive network of concrete car tracks, busy ring roads, fly-overs, private toll routes, cycling paths and intensively maintained lanes.",
+        "scenario3":    "In the residential areas we find a fine-grained network of small roads (in the local community, driving your car is not done), clean railway connections, airpods, e-bike routes and broad walking and cycling paths.",
+        "scenario1":    "In the residential areas we find older concrete streets and lanes. Their maintenance is poor and differs per area. During winters, nobody sprinkles salt on the roads."
+    }
+},{
+    "title":"Character and usage of big harbors",
+    "img": "../../data/images/image21.png",
+    "place":"Amsterdam",
+    "id":"Amsterdam2",
+    "text": {
+        "scenario2":    "The harbor function has grown and knows several distribution centers in the hinterland.",
+        "scenario4":    "The harbor function has grown, is smartly controlled and knows a large amount of tanker storage for the busy tanker shipping (fluid, chemical).",
+        "scenario3":    "The harbor function has not grown and has changed. Tanker storage has disappeared in favor of ‘solar energy centers’.",
+        "scenario1":    "The harbor function has been reduced in favor of habitation and recreation on and by the water. Every community has its own quays for transport over water."
+    }
+},{
+    "title":"Technology in roads",
+    "img": "../../data/images/image23.png",
+    "place":"Amsterdam",
+    "id":"Amsterdam3",
+    "text": {
+        "scenario2":    "Self-propelled vehicles drive in convoys and communicate via sensors and with roadside systems.",
+        "scenario4":     "Technology in roads is aimed at facilitating the paying car driver.",
+        "scenario3":    "The road network partly serves as solar cell (solar roads) and offers the opportunity to charge your verhicle.",
+        "scenario1":    "Roads are populated by a colorful parade of (partly self-developed) vehicles powered by solar energy or other alternative fuel. Traffic jams are prevented by own sensors and information shared through apps."
+    }
+},{
+    "title":"Distribution in the city",
+    "img": "../../data/images/image24.png",
+    "place":"Amsterdam",
+    "id":"Amsterdam4",
+    "text": {
+        "scenario2":    "Fine-grained distribution centers supply the residential areas according to the ‘last mile principle’.",
+        "scenario4":    "Trailer-trucks and vans unrestrainedly cross all residential areas.",
+        "scenario3":    "Fine-grained distribution based on 'big data analytics’: at any moment a considered deployment of canals in the city, drones through the air and underground tubes or overground robots.",
+        "scenario1":    "Not much distribution is needed by companies. Communities are self-sufficient and take care of the remaining distribution streams."
+    }
+},{
+    "title":"Character and usage of public transport in the city",
+    "img": "../../data/images/image25.png",
+    "place":"Almere",
+    "id":"Almere3",
+    "text": {
+        "scenario2":    "The public transport network has been expanded and is characterized by highly frequent services, with good connections between different modalities.",
+        "scenario4":    "Many suburbs lack public transport services.",
+        "scenario3":    "Public transport is the standard way of traveling. Therefore, it exists in a variety of types, which can be combined with other 'clean' types of mobility.",
+        "scenario1":    "Public transport is hardly used. As a result, it has been strongly reduced."
+    }
+},{
+    "title":"Motor vehicles",
+    "img": "../../data/images/image26.png",
+    "place":"Tussengebied",
+    "id":"Tussengebied3",
+    "text": {
+        "scenario2":    "Cars are small, self-propelling and often electric. Fossil fuel is expensive and mainly used for the production of electricity.",
+        "scenario4":    "There are lots of cars (large and small), including cars which can be used as work location. Cars run on a variety of fuel types: gasoline, diesel and hybrid cars.",
+        "scenario3":    "The small amount of cars left use electricity, hydrogen or solar energy. The terms green, shared and intelligent are leading when it comes to car use.",
+        "scenario1":    "There are many varieties of motorized transport (sometimes even flying) using alternative, cheap fuel types."
+    }
+},{
+    "title":"Green areas",
+    "img": "../../data/images/image00.png",
+    "place":"Amsterdam",
+    "id":"Amsterdam5",
+    "text": {
+        "scenario2":    "There are many parks with trees and green in between the highrise buildings, offering refreshment and serving as decoration for the railway, cycling and pedestrian networks.",
+        "scenario4":    "Only little focus on green and a lot of concrete and stone in the city center. A lot of naturally growing green is found in the suburbs.",
+        "scenario3":    "There are a lot of green areas in the neighborhoods which have centrally planned side-functions such as energy production, agriculture, recreation and climate adjustment.",
+        "scenario1":    "There is a lot of green by means of urban agriculture, but also a lot of stone surfaces. Monoculture of bio-crops in the rural areas, serving as the basis for bio-diesel."
+    }
+},{
+    "title":"Basic axis (energy system)",
+    "img": "../../data/images/image01.png",
+    "place":"Utrecht",
+    "id":"Utrecht3",
+    "text": {
+        "scenario2":    "Fossil fuel dominates the energy mix (but increasingly limited and, therefore, expensive). Coal- and gas-fired power stations for electricity production, combined with CO2 storage.",
+        "scenario4":    "Fossil fuel dominates the energy mix (but increasingly limited and, therefore, expensive). Strong focus on efficient coal- and gas-fired power stations without CO2 storage and on large nuclear power stations.",
+        "scenario3":    "Alternative energy dominates the energy mix. The city itself functions as a clean power station with all its solar roofs and solar surfaces via smart grids.",
+        "scenario1":    "Alternative energy dominates the energy mix. Energy production in the residential areas by, among others, solar panels and bio-gas from food leftovers."
+    }
+},{
+    "title":"Character of residential areas",
+    "img": "../../data/images/image27.png",
+    "place":"Amsterdam",
+    "id":"Amsterdam6",
+    "text": {
+        "scenario2":    "Civilians work from home via digital networks or commute by public transport to ‘the city’.",
+        "scenario4":    "Many suburbs and individual city compartments for commuters; next to this there are urban ghettos housing low-income and jobless residents; a lot of vacancies.",
+        "scenario3":    "Residential areas are also areas of value generation: ecological, social and financial.",
+        "scenario1":    "Many campuses, small laboratories and arts academies which are based on the ‘research through design’ principle."
+    }
+},{
+    "title":"Technology in the street",
+    "img": "../../data/images/image02.png",
+    "place":"Utrecht",
+    "id":"Utrecht4",
+    "text": {
+        "scenario2":    "Information about the city and all kinds of local services via smartphone (no sign-boards).",
+        "scenario4":    "Mini vans offering a wide range of connected transport services.",
+        "scenario3":    "A lot of ‘drone distributution dropping zones’. Plentiful charging locations in the public space for both the delivery and reception of energy.",
+        "scenario1":    "There are many innovative personal means of transport and internet hubs are everywhere (small cafés like Seats2meet Coworking-locations)."
+    }
+},{
+    "title":"Air",
+    "img": "../../data/images/image04.png",
+    "place":"Almere",
+    "id":"Almere4",
+    "text":{
+        "scenario2":    "Air pollution is on an average level. CO2 is stored underground, but there is still pollution because of the use of fossil fuel.",
+        "scenario4":     "Air pollution is extensive. There is a lot of use of fossil fuel regularly causing smog problems.",
+        "scenario3":    "Air pollution is minimal. Very clean air because of extensive, focused public policies.",
+        "scenario1":    "Air pollution is on an average level. Locally there are large variations in pollution levels."
+    }
+},{
+    "title":"IT and local government",
+    "img": "../../data/images/image05.png",
+    "place":"Utrecht",
+    "id":"Utrecht5",
+    "text": {
+        "scenario2":    "The central government firmly works together with large IT companies in order to optimally take advantage of insights into the behavior of civilians.",
+        "scenario4":    "The central government is overtaken by big and small IT companies when it comes to finding solutions targeting specific groups in society.",
+        "scenario3":    "The central government stimulates big data applications decreasing the ecological footprint (recycling, sharing, maintenance) and strictly guards the privacy of her inhabitants when it comes to the gathering and re-use of data.",
+        "scenario1":    "The central government is overtaken by local, 'crowdfunded' IT initiatives."
+    }
+},{
+    "title":"Production and the share-economy",
+    "img": "../../data/images/image06.png",
+    "place":"Almere",
+    "id":"Almere5",
+    "text": {
+        "scenario2":    "Production and consumption, and the use of resources involved in this, are strongly regulated by the government.",
+        "scenario4":    "The market has the freedom to determine the consumption and also the use of resources involved in this.",
+        "scenario3":    "Sustainable compaines coordinate the production chain, logistics and reverse logistics; consumers are are able to lease products (individually or in groups).",
+        "scenario1":    "Individual consumption of (mostly) locally produced food, products and services."
+    }
+}]
+

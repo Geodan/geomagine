@@ -8,7 +8,13 @@
 
 <script src="../bower_components/underscore/underscore.js"></script>
 <script src="../bower_components/cow/dist/cow.js"></script>
+<script src="../bower_components/d3/d3.js"></script>
 <script>
+
+d3.json('../pouchtest/properties.json',function(properties){
+	window.eigenschappen = properties;
+});
+
 var core = new Cow.core({
  		herdname: 'geomagine', 
  		maxage: 1000 * 60 * 60 * 10 * 1 //10 uur maxage
@@ -26,12 +32,29 @@ core.socketservers({
 core.socketserver('default');
 core.connect();
 
-
-
-
 function checkcontent(resolve){
 	if (curproject.items().length > 0){
-		resolve();
+		var items_t = curproject.items().filter(function(d){
+			return d.data('type') == 'team';
+		}); 
+		var items_s = curproject.items().filter(function(d){
+			return d.data('type') == 'scenario';
+		}); 
+		var numTeams = core.project().data('numTeams');
+		var numScenarios = core.project().data('numScenarios');
+		var numEigenschappen = core.project().data('numEigenschappen');
+		var numKaartjes = core.project().data('numKaartjes');
+		
+		if (
+			curproject.items().filter(function(d){
+				return d.data('type') == 'eigenschap';
+			}).length == numEigenschappen)
+		{
+			resolve();
+		}
+		else {
+			console.log('Not enough items yet');
+		}
 	}
 	else {
 		console.log('Not enough items yet');

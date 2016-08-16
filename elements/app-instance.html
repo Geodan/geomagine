@@ -275,8 +275,8 @@ Polymer({
     _typeChanged: function(type, _project) {
         var self = this;
         this.project_ready.then(function() {
-            console.log('_typeChanged: ' + progress);
-            self.cow.peer().data('type', self.type);
+            console.log('_typeChanged: ' + type);
+            self.cow.peer().data('type', self.type).sync();
         });
     },
     setProgress: function(progress){

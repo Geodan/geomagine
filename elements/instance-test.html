@@ -6,11 +6,36 @@
         <gm-cow-core id="cowcore" config="[[cowconfig]]" core="{{_cow}}"></gm-cow-core>
         <app-instance
                 id="instance"
-                cow="[[_cow]]"
-                team="[[team]]"
-                scenario="[[scenario]]"
-                project_ready="{{project_ready}}"
+                cow=[[_cow]]
+                team=[[team]]
+                scenario=[[scenario]]
+                type="eerstescherm"
+                project_ready={{project_ready}}
+                eigenschappen={{eigenschappen}}
+                kaartjes={{kaartjes}}
         ></app-instance>
+        
+        
+        <div>
+        <h3>Content check: </h3>
+        
+        </div>
+        
+        <div>
+        Team: [[team]] <br>
+        Scenario: [[scenario]]
+        Project ready: [[project_ready]]
+        
+        <h3>Eigenschappen</h3>
+        <template is="dom-repeat" items="[[eigenschappen]]">
+        	<div>Eigenschap: [[item._data.title]]</div>
+        </template>
+        
+        <h3>Kaartjes</h3>
+        <template is="dom-repeat" items="[[kaartjes]]">
+        	<div>Eigenschap: [[item._data.title]]</div>
+        </template>
+        
     </template>
 </dom-module>
 <script>
@@ -24,10 +49,15 @@
             }
         },
         _waitForProject: function() {
+        	var self =this;
             if (this.project_ready) {
                 this.project_ready.then(function(){
                     console.log('project ready');
+                    self.team = 'team1';
+                    self.scenario = 'scenario1';
                 });
+                
+                
             }
         },
         ready: function() {
