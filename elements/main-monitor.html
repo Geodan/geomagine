@@ -8,37 +8,25 @@
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 
 <link rel="import" href="./app-instance.html">
+<link rel="import" href="./score-card.html">
+
 <script src="../cowconfigs.js"></script>
-<dom-module id="main-tweedescherm">
+<dom-module id="main-monitor">
     <template>
 		<style is="custom-style" include="iron-flex iron-flex-alignment">
-		  #cards {
-			
-			height: 344px;
-			width: 100%;
-		  }
-		
-		  #cards > paper-card {
-			box-sizing: border-box;
-			max-width: 184px;
-			margin: 4px;
-			flex: 0 0 auto;
-			font-size: 10pt;
-		  }
 		</style>
         <gm-cow-core id="cowcore" config="[[cowconfig]]" core="{{_cow}}"></gm-cow-core>
         <app-instance
 			id="maininstance"
 			cow="[[_cow]]"
-			team="{{team}}"
-			scenario="[[scenario]]"
+			team="xx"
+			scenario="xx"
 			projectname="{{projectname}}"
-			type="tweedescherm"
+			type="monitor"
+			teams="{{teams}}"
+			scenarios="{{scenarios}}"
 			project_ready="{{project_ready}}"
-			eigenschappen="{{eigenschappen}}"
         ></app-instance>
-        
-        
         
         <paper-dialog modal opened='[[waiting]]'>
 		  <h2>Paused</h2>
@@ -48,17 +36,19 @@
 		  </div>
 		</paper-dialog>
 		
+		<h1>Monitor</h1>
         <h4>Project: [[projectname]]</h4>
         
-        
         <div id="cards" class="layout horizontal wrap">
-			<template is="dom-repeat" items="[[entities]]" sort="_sortByTitle">
-				<paper-card>
-					<div class="card-content">
-						[[item._data.team]]<br>
-						[[item._data.scenario]]
-					</div>
-				</paper-card>
+			<template is="dom-repeat" items="[[teams]]" as="team" sort="_sortByTitle">
+				<template is="dom-repeat" items="[[scenarios]]" as="scenario" sort="_sortByTitle">
+					<score-card
+						team="[[team._data.name]]"
+						scenario="[[scenario._data.name]]"
+						cow="[[_cow]]"
+						></score-card>
+				</template>
+				<br>
 			</template>
         </div>
     </template>
@@ -66,7 +56,7 @@
 <script>
 
 Polymer({
-	is: 'main-tweedescherm',
+	is: 'main-monitor',
 	properties: {
 		project_ready: {
 			type: Object,
@@ -74,15 +64,9 @@ Polymer({
 		},
 		scenarios: {
 			type: Array,
-			value: function(){
-				return ['scenario1','scenario2','scenario3','scenario4'];
-			}				
 		},
 		teams: {
 			type: Array,
-			value: function(){
-				return ['team1','team2','team3','team4'];
-			}				
 		},
 		scenario: String,
 		team: String,
@@ -91,14 +75,14 @@ Polymer({
 			value: true
 		}
 	},
+	
 	_waitForProject: function() {
 		var self =this;
 		this.waiting = true;
+		this.entities = [];
 		if (this.project_ready) {
 			this.project_ready.then(function(){
 				console.log('project ready');
-				self.team = 'team1';
-				self.scenario = 'scenario1';
 				self.waiting = false;
 				//self.projectcreated = new Date(self.project.created()).toISOString();
 			});

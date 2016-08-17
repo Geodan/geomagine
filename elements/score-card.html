@@ -1,0 +1,49 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="./app-instance.html">
+
+<dom-module id="score-card">
+    <template>
+    <app-instance
+		cow="[[cow]]"
+		team="[[team]]"
+		scenario="[[scenario]]"
+		type="monitor"
+		progress="{{progress}}"
+		project_ready="{{project_ready}}"
+	></app-instance>
+    <paper-card>
+    	<div class="card-content">
+			[[team]]<br>
+			[[scenario]]<br>
+			[[progress]]
+			
+		</div>
+		
+		
+		
+	</paper-card>
+    </template>
+</dom-module>
+
+<script>
+
+Polymer({
+	is: 'score-card',
+	properties: {
+		cow: Object,
+		team: String,
+		scenario: String,
+		progress: Number,
+		project_ready: {
+			type: Object,
+			observer: '_waitForProject'
+		},
+	},
+	_waitForProject: function(){
+		
+	},
+	ready: function(){
+	}
+});
+</script>
+	

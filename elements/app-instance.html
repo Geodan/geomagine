@@ -53,6 +53,14 @@ Polymer({
             value: 0,
             notify: true
         },
+        scenarios: {
+        	type: Array,
+        	notify: true
+        },
+        teams: {
+        	type: Array,
+        	notify: true
+        },
         project_ready: { // Promise
             type: Object,
             notify: true
@@ -183,10 +191,18 @@ Polymer({
             return;
         }
 
+        this.scenarios = this._project.items().filter(function(d){
+            return !d.deleted() && d.data('type') === 'scenario';
+        });
+        
+        this.teams = this._project.items().filter(function(d){
+            return !d.deleted() && d.data('type') === 'team';
+        });
+        
         var myItems = self._project.items().filter(function(d){
             return !d.deleted() && d.data('team') === self.team && d.data('scenario') === self.scenario;
         });
-
+        
         self.eigenschappen = myItems.filter(function(d){
             return d.data('type') === 'eigenschap';
         });
@@ -220,6 +236,7 @@ Polymer({
         if (progress.length > 0) {
             self._cowProgress = progress[0];
             self.progress = self._cowProgress.data('value');
+            debugger;
         }
 
         self._calculateScore();
