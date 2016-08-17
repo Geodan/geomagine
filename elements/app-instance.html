@@ -187,7 +187,7 @@ Polymer({
     },
     _itemsChanged: function() {
         var self = this;
-        if (!this._project || !this.team || !this.scenario) {
+        if (!this._project) {
             return;
         }
 
@@ -198,7 +198,11 @@ Polymer({
         this.teams = this._project.items().filter(function(d){
             return !d.deleted() && d.data('type') === 'team';
         });
-        
+
+        if (!this.team || !this.scenario) {
+            return;
+        }
+
         var myItems = self._project.items().filter(function(d){
             return !d.deleted() && d.data('team') === self.team && d.data('scenario') === self.scenario;
         });
