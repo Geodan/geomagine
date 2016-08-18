@@ -8,6 +8,7 @@
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 
 <link rel="import" href="./app-instance.html">
+<link rel="import" href="./gm-cow-core.html">
 <script src="../cowconfigs.js"></script>
 <dom-module id="main-eerstescherm">
     <template>
@@ -63,13 +64,24 @@
 				</template>
 			  </paper-listbox>
 			</paper-dropdown-menu>
+			
+			<paper-dropdown-menu label="Progress">
+			  <paper-listbox class="dropdown-content" selected="{{progress}}" attr-for-selected="name">
+					<paper-item name="0">0</paper-item>
+					<paper-item name="1">1</paper-item>
+					<paper-item name="2">2</paper-item>
+			  </paper-listbox>
+			</paper-dropdown-menu>
 
         </div>
         
         <div id="kaartjes" class="layout horizontal wrap">
 			<template is="dom-repeat" items="[[kaartjes]]" sort="_sortByTitle">
 				<paper-card>
-					<div class="card-content">[[item._data.title]]</div>
+					<div class="card-content">[[item._data.title]]<br>
+					[[item._data.x]]<br>
+					[[item._data.y]]
+					</div>
 				</paper-card>
 			</template>
         </div>
@@ -98,6 +110,10 @@ Polymer({
 		},
 		scenario: String,
 		team: String,
+		progress: {
+			type: Number,
+			observer: '_progressChanged'
+		},
 		waiting: {
 			type: Boolean,
 			value: true
@@ -115,6 +131,9 @@ Polymer({
 				//self.projectcreated = new Date(self.project.created()).toISOString();
 			});
 		}
+	},
+	_progressChanged: function(p){
+		this.$.instance.setProgress(p);
 	},
 	ready: function() {
 		this.cowconfig = window.cowconfig;
