@@ -70,6 +70,9 @@ Polymer({
         },
         _cowProgress: {
             type: Object
+        },
+        _connected: { // Promise
+            type: Object
         }
     },
     observers: [
@@ -82,9 +85,16 @@ Polymer({
         if (!this.cow) return;
         console.log('_cowChanged');
 
+        var self = this;
+        this._connected = new Promise(function(resolve, reject){
+            self.cow.messenger().on('connected', function(){
+                console.log('messenger connected');
+                self.cow.messenger().off('connected');
+                resolve();
+            });
+        });
         this._waitForProject();
 
-        var self = this;
         if (this.type !== 'eerstescherm') {
             this.project_ready.then(function () {
                 this.cow.peerStore().on('datachange', function () {
@@ -135,6 +145,7 @@ Polymer({
             }
             self._project = projects[0];
             self.projectname = self._project.data('name') || 'unknown';
+            console.log('Loading project: ' + self.projectname);
             self._itemsChanged();
             if (!self._project_ready_resolved && self._checkProject()) {
                 resolve();
@@ -252,9 +263,9 @@ Polymer({
     },
     _teamChanged: function(team, _project) {
         var self = this;
-        this.project_ready.then(function() {
+        this._connected.then(function() {
             self._reset();
-            console.log('_teamChanged');
+            console.log('_teamChanged: ' + team);
 
             /*  We probably don't need to check for duplicate teams, plus it might cause unwanted restrictions
                 when teams move from one table to the next
@@ -271,13 +282,15 @@ Polymer({
                 }
             }*/
 
-            self.cow.peer().data('team', self.team).sync();
+            if (self.cow.peer()) {
+                self.cow.peer().data('team', self.team).sync();
+            }
             self._itemsChanged();
         });
     },
     _scenarioChanged: function(scenario, _project) {
         var self = this;
-        this.project_ready.then(function() {
+        this._connected.then(function() {
             console.log('_scenarioChanged: ' + scenario);
             self._reset();
 
@@ -294,15 +307,19 @@ Polymer({
                 }
             }
 
-            self.cow.peer().data('scenario', self.scenario).sync();
+            if (self.cow.peer()) {
+                self.cow.peer().data('scenario', self.scenario).sync();
+            }
             self._itemsChanged();
         });
     },
     _typeChanged: function(type, _project) {
         var self = this;
-        this.project_ready.then(function() {
+        this._connected.then(function() {
             console.log('_typeChanged: ' + type);
-            self.cow.peer().data('type', self.type).sync();
+            if (self.cow.peer()) {
+                self.cow.peer().data('type', self.type).sync();
+            }
         });
     },
     setProgress: function(progress){
