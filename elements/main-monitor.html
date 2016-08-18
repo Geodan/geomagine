@@ -41,6 +41,7 @@
         
         <div id="cards" class="layout horizontal wrap">
 			<template is="dom-repeat" items="[[teams]]" as="team" sort="_sortByTitle">
+			<div class="layout vertical wrap">
 				<template is="dom-repeat" items="[[scenarios]]" as="scenario" sort="_sortByTitle">
 					<score-card
 						team="[[team._data.name]]"
@@ -48,7 +49,8 @@
 						cow="[[_cow]]"
 						></score-card>
 				</template>
-				<br>
+				</div>
+				
 			</template>
         </div>
     </template>

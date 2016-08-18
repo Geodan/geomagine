@@ -65,6 +65,26 @@ Polymer({
             type: Object,
             notify: true
         },
+        eventscore: {
+        	type: Number,
+        	notify: true,
+        	value: 0,
+        },
+        xscore: {
+        	type: Number,
+        	notify: true,
+        	value: 0,
+        },
+        yscore: {
+        	type: Number,
+        	notify: true,
+        	value: 0,
+        },
+        score: {
+        	type: Number,
+        	notify: true,
+        	value: 0,
+        },
         _project: {
             type: Object
         },
@@ -144,6 +164,7 @@ Polymer({
                 });
             }
             self._project = projects[0];
+            self.cow.project(self._project.id());//set default cow project
             self.projectname = self._project.data('name') || 'unknown';
             console.log('Loading project: ' + self.projectname);
             self._itemsChanged();

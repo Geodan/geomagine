@@ -1,0 +1,194 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="./gm-cow-core.html">
+<link rel="import" href="./app-instance.html">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="../cowconfigs.js"></script>
+
+<dom-module id="main-test">
+    <template>
+		<style is="custom-style" include="iron-flex iron-flex-alignment">
+		</style>
+        <gm-cow-core id="cowcore" config="[[cowconfig]]" core="{{cow}}"></gm-cow-core>
+        
+        <app-instance
+			id="maininstance"
+			cow="[[cow]]"
+			team="xx"
+			scenario="xx"
+			projectname="{{projectname}}"
+			type="monitor"
+			teams="{{teams}}"
+			scenarios="{{scenarios}}"
+			project_ready="{{project_ready}}"
+        ></app-instance>
+        
+		<h1>Test</h1>
+		Projectname: [[projectname]]
+		<paper-button raised on-click='deleteProjects'>Delete projects</paper-button><br>
+		<paper-input value='{{newprojectname}}'></paper-input><paper-button raised on-click='newProject'>Fill project</paper-button><br>
+		<paper-button raised on-click='autoplay'>Autoplay</paper-button><br>
+		<paper-button raised on-click='stopAutoplay'>Stop</paper-button><br>
+        
+    </template>
+</dom-module>
+<script>
+
+Polymer({
+	is: 'main-test',
+	properties: {
+		cow: {
+			type: Object
+		},
+		teams: Array,
+		scenarios: Array
+	},
+	ready: function() {
+		this.cowconfig = window.cowconfig;
+	},
+	attached: function () {
+	},
+	autoplay: function(){
+		var self = this;
+		
+		var shuffle = function(team, scenario){
+			var myitems = self.cow.project().items().filter(function(d){
+					return !d.deleted() && d.data('scenario') == scenario && d.data('team') == team;
+			});
+			var kaartjes = myitems.filter(function(d){
+					return d.data('type') == 'kaartje';
+			});
+			var rand = Math.floor(kaartjes.length * Math.random());
+			kaartjes[rand]
+				.data('x',Math.round(Math.random() * 100))
+				.data('y',Math.round(Math.random() * 100))
+				.sync();
+		}
+		
+		this.project_ready.then(function(){
+			self.shuffleInterval = window.setInterval(function(){
+				var rand = Math.floor(self.teams.length * Math.random());
+				var team = self.teams[rand];
+				var rand = Math.floor(self.scenarios.length * Math.random());
+				var scenario = self.scenarios[rand];
+				shuffle(team.data('name'), scenario.data('name'));
+			},100);
+		});
+		
+		
+	},
+	stopAutoplay: function(){
+		window.clearInterval(this.shuffleInterval);
+	},
+	deleteProjects: function(){
+    	var self = this;
+    	this.cow.projectStore().loaded.then(function(){
+    		self.cow.projects().filter(function(d){
+    			return !d.deleted();
+    		}).forEach(function(d){
+    			d.deleted(true).sync();
+    		});
+    	});
+    },
+    newProject: function() {
+        var self = this;
+
+        console.log('starting project fill');
+        var scenarios = ['scenario1', 'scenario2', 'scenario3', 'scenario4'];
+        var teams = ['team1', 'team2', 'team3', 'team4'];
+
+        this.cow.projectStore().loaded.then(function(){
+            var project = self.cow.projects({}).sync();
+            project.data({
+            		name: self.newprojectname || 'noname', 
+            		numScenarios: scenarios.length,
+                    numTeams: teams.length,
+                    numEigenschappen: 9999999,
+                    numKaartjes: 9999999,
+                    numVerbindingen: 0,
+                    numProgress: scenarios.length * teams.length
+            }).sync();
+            console.log('Filling new project...');
+            d3.json('./data/properties.json',function(err,d3data){
+                if (err){
+                    //console.warn('data length: ' + d3data.length);
+                    console.warn(err);
+                    return;
+                }
+                project
+                    .data('numEigenschappen', scenarios.length * teams.length * d3data.length)
+                    .sync();
+
+                var counter = 0;
+                var protoid = new Date().getTime().toString();
+
+                teams.forEach(function(team,j) {
+                    project.items({_id: protoid + counter++}).data('type', 'team').data('name', team).sync();
+                });
+
+                scenarios.forEach(function(scenario,i){
+                    project.items({_id:protoid + counter++}).data('type', 'scenario').data('name', scenario).sync();
+                    teams.forEach(function(team,j){
+                        project.items({_id:protoid + counter++})
+                        	.data({
+                        		type: 'progress',
+                                scenario: scenario,
+                                team: team,
+                                value: 0
+                            }).sync();
+                        d3data.forEach(function(d,k){
+                            project.items({_id:protoid + counter++})
+                            	.data({
+                            		type: 'eigenschap',
+                                    scenario: scenario,
+                                    team: team,
+                                    num: k,
+                                    title: d.title,
+                                    img: d.img,
+                                    place: d.place,
+                                    text: d.text[scenario],
+                                    found: false
+                                }).sync();
+                        });
+                    });
+                });
+            });
+            var counter = 0;
+            var protoid = new Date().getTime().toString();
+            var numKaartjes = 0;
+            scenarios.forEach(function(scenario, i){
+           		d3.tsv('./data/'+scenario+'.tsv',function(err,data){
+           			if (err){
+						//console.warn('data length: ' + d3data.length);
+						console.warn(err);
+						return;
+					}
+                    numKaartjes = numKaartjes + teams.length * data.length;
+                    if (i === (scenarios.length - 1)) {
+                        project.data('numKaartjes', numKaartjes).sync();
+                    }
+           			data.forEach(function(d){
+						teams.forEach(function(team){
+							project.items({_id:protoid + counter++})
+								.data({
+									type: 'kaartje',
+									scenario: scenario,
+									team: team,
+									num: d.id,
+									title: d.name,
+									x_org: d.x,
+									y_org: d.y
+								}).sync();
+						});
+					});
+           		});
+           });
+        });
+    },
+
+});
+
+</script>
