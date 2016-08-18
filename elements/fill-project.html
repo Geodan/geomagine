@@ -46,7 +46,7 @@ Polymer({
                     numTeams: teams.length,
                     numEigenschappen: 9999999,
                     numKaartjes: 9999999,
-                    numVerbindingen: 9999999,
+                    numVerbindingen: 0,
                     numProgress: scenarios.length * teams.length
             }).sync();
             console.log('Filling new project...');
@@ -104,7 +104,7 @@ Polymer({
 						console.warn(err);
 						return;
 					}
-                    numKaartjes += teams.length * data.length;
+                    numKaartjes = numKaartjes + teams.length * data.length;
                     if (i === (scenarios.length - 1)) {
                         project.data('numKaartjes', numKaartjes).sync();
                     }
