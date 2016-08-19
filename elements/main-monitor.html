@@ -63,10 +63,10 @@
 		</paper-material>
 		<paper-material class='layout vertical'>
 			<h4>Admin</h4>
-			<app-newproject id='newprojectdialog' cow="[[cow]]"></app-newproject>
+			<app-newproject id='newprojectdialog' cow="[[_cow]]"></app-newproject>
 			<paper-button raised on-click='_newProject'>Fill project</paper-button>
 			<paper-button raised on-click='_deleteProjects'>Delete projects</paper-button>
-			<app-test id='test' cow="[[cow]]" teams="[[teams]]" scenarios="[[scenarios]]"></app-test>
+			<app-test id='test' cow="[[_cow]]" teams="[[teams]]" scenarios="[[scenarios]]"></app-test>
 			<paper-item>Test</paper-item>
 			<paper-button raised on-click='_startTest'>Start</paper-button><br>
 			<paper-button raised on-click='_stopTest'>Stop</paper-button><br>
@@ -97,8 +97,8 @@ Polymer({
 	},
 	_deleteProjects: function(){
     	var self = this;
-    	this.cow.projectStore().loaded.then(function(){
-    		self.cow.projects().filter(function(d){
+    	this._cow.projectStore().loaded.then(function(){
+    		self._cow.projects().filter(function(d){
     			return !d.deleted();
     		}).forEach(function(d){
     			d.deleted(true).sync();

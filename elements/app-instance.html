@@ -179,6 +179,7 @@ Polymer({
             self.scenarios = self._project.data('scenarios');
             console.log('Loading project: ' + self.projectname);
             self._project.itemStore().synced.then(function(){
+                console.log('itemStore synced');
                 self._itemsChanged();
                 if (!self._project_ready_resolved && self._checkProject()) {
                     resolve();
@@ -196,6 +197,7 @@ Polymer({
         self._project_ready_resolved = false;
         self.project_ready = new Promise(function(resolve, reject){
             self.cow.projectStore().synced.then(function() {
+                console.log('projectStore synced');
                 if (!findProject(resolve)) {
 
                     // project is not yet loaded, wait for it...
@@ -218,13 +220,13 @@ Polymer({
         var project = this._project;
         var items = project.items();
 
-        /*console.log('scenarios: ' + items.filter(function(d) { return d.data('type') === 'scenario' }).length + ' of ' + project.data('numScenarios'));
+        console.log('scenarios: ' + items.filter(function(d) { return d.data('type') === 'scenario' }).length + ' of ' + project.data('numScenarios'));
         console.log('teams: ' + items.filter(function(d) { return d.data('type') === 'team' }).length + ' of ' + project.data('numTeams'));
         console.log('eigenschappen: ' + items.filter(function(d) { return d.data('type') === 'eigenschap' }).length + ' of ' + project.data('numEigenschappen'));
         console.log('kaartjes: ' + items.filter(function(d) { return d.data('type') === 'kaartje' }).length + ' of ' + project.data('numKaartjes'));
         console.log('verbindingen: ' + items.filter(function(d) { return d.data('type') === 'verbinding' }).length + ' of ' + project.data('numVerbindingen'));
         console.log('progress: ' + items.filter(function(d) { return d.data('type') === 'progress' }).length + ' of ' + project.data('numProgress'));
-*/
+
         return items.filter(function(d) { return d.data('type') === 'scenario' }).length === project.data('numScenarios') &&
                 items.filter(function(d) { return d.data('type') === 'team' }).length === project.data('numTeams') &&
                 items.filter(function(d) { return d.data('type') === 'eigenschap' }).length === project.data('numEigenschappen') &&
@@ -283,12 +285,12 @@ Polymer({
         self._calculateScore();
     },
     _checkPeers: function() {
-        var peers = this.cow.peers().filter(function (d) {
-            return !d.deleted() && d.id() !== this.cow.peerid() && d.data('scenario') === this.scenario;
-        });
+        console.log('_checkPeers');
+        var self = this;
         if (this.type === 'tweedescherm') {
-            peers = peers.filter(function(d) {
-                return d.data('type') === 'eerstescherm';
+            var peers = this.cow.peers().filter(function (d) {
+                return !d.deleted() && d.id() !== self.cow.peerid() && d.data('scenario') === self.scenario &&
+                        d.data('type') === 'eerstescherm';
             });
             if (peers.length > 0 && peers[0].data('team') != this.team) {
                 // eerstescherm changed team
@@ -296,6 +298,10 @@ Polymer({
             }
         }
         else if (this.type === 'monitor') {
+            var peers = this.cow.peers().filter(function (d) {
+                return !d.deleted() && d.id() !== self.cow.peerid() && d.data('scenario') === self.scenario &&
+                        d.data('team') === self.team;
+            });
             this.eerstescherm_online = peers.filter(function(d){ return d.data('type') === 'eerstescherm' }).length > 0;
             this.tweedescherm_online = peers.filter(function(d){ return d.data('type') === 'tweedescherm' }).length > 0;
         }

@@ -36,7 +36,7 @@ Polymer({
 		
 		var shuffle = function(team, scenario){
 			var myitems = self.cow.project().items().filter(function(d){
-					return !d.deleted() && d.data('scenario') == scenario && d.data('team') == team;
+					return !d.deleted() && d.data('scenario') === scenario && d.data('team') === team;
 			});
 			var kaartjes = myitems.filter(function(d){
 					return d.data('type') == 'kaartje';
@@ -46,7 +46,7 @@ Polymer({
 				.data('x',Math.round(Math.random() * 100))
 				.data('y',Math.round(Math.random() * 100))
 				.sync();
-		}
+		};
 		
 		
 		self.shuffleInterval = window.setInterval(function(){
@@ -54,7 +54,7 @@ Polymer({
 			var team = self.teams[rand];
 			var rand = Math.floor(self.scenarios.length * Math.random());
 			var scenario = self.scenarios[rand];
-			shuffle(team.data('name'), scenario.data('name'));
+			shuffle(team, scenario);
 		},100);
 		
 		

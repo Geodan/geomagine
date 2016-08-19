@@ -32,6 +32,8 @@
 			cow="[[_cow]]"
 			team="{{team}}"
 			scenario="[[scenario]]"
+			teams="{{teams}}"
+			scenarios="{{scenarios}}"
 			projectname="{{projectname}}"
 			type="tweedescherm"
 			project_ready="{{project_ready}}"
@@ -68,7 +70,7 @@
         
         <div id="eigenschappen" class="layout horizontal wrap">
 			<template is="dom-repeat" items="[[eigenschappen]]" sort="_sortByTitle">
-				<paper-card heading="[[item._data.title]]" image="[[item._data.img]]" alt="image">
+				<paper-card heading="[[item._data.title]]" image="./data/images/[[item._data.img]]" alt="image">
 					<div class="card-content">[[item._data.text]]</div>
 				</paper-card>
 			</template>
@@ -84,18 +86,8 @@ Polymer({
 			type: Object,
 			observer: '_waitForProject'
 		},
-		scenarios: {
-			type: Array,
-			value: function(){
-				return ['scenario1','scenario2','scenario3','scenario4'];
-			}				
-		},
-		teams: {
-			type: Array,
-			value: function(){
-				return ['team1','team2','team3','team4'];
-			}				
-		},
+		scenarios: Array,
+		teams: Array,
 		scenario: String,
 		team: String,
 		waiting: {
@@ -109,8 +101,8 @@ Polymer({
 		if (this.project_ready) {
 			this.project_ready.then(function(){
 				console.log('project ready');
-				self.team = 'team1';
-				self.scenario = 'scenario1';
+				self.team = self.teams[0];
+				self.scenario = self.scenarios[0];
 				self.waiting = false;
 				//self.projectcreated = new Date(self.project.created()).toISOString();
 			});
