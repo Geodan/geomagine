@@ -3,46 +3,23 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 
-
-<link rel="import" href="./gm-cow-core.html">
-<link rel="import" href="./app-newproject.html">
 <link rel="import" href="./app-instance.html">
 <script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="../cowconfigs.js"></script>
 
-<dom-module id="main-test">
+<dom-module id="app-test">
     <template>
 		<style is="custom-style" include="iron-flex iron-flex-alignment">
 		</style>
-        <gm-cow-core id="cowcore" config="[[cowconfig]]" core="{{cow}}"></gm-cow-core>
-        
-        	<app-newproject cow="[[cow]]"></app-newproject>
-        </paper-dialog>
-        <app-instance
-			id="maininstance"
-			cow="[[cow]]"
-			team="xx"
-			scenario="xx"
-			projectname="{{projectname}}"
-			type="monitor"
-			teams="{{teams}}"
-			scenarios="{{scenarios}}"
-			project_ready="{{project_ready}}"
-        ></app-instance>
-        
-		<h1>Test</h1>
-		Projectname: [[projectname]]
-		<paper-button raised on-click='deleteProjects'>Delete projects</paper-button><br>
-		<paper-input value='{{newprojectname}}'></paper-input><paper-button raised on-click='newProject'>Fill project</paper-button><br>
-		<paper-button raised on-click='autoplay'>Autoplay</paper-button><br>
-		<paper-button raised on-click='stopAutoplay'>Stop</paper-button><br>
+		<content>
+		</content>
+		
         
     </template>
 </dom-module>
 <script>
 
 Polymer({
-	is: 'main-test',
+	is: 'app-test',
 	properties: {
 		cow: {
 			type: Object
@@ -51,7 +28,6 @@ Polymer({
 		scenarios: Array
 	},
 	ready: function() {
-		this.cowconfig = window.cowconfig;
 	},
 	attached: function () {
 	},
@@ -87,16 +63,7 @@ Polymer({
 	stopAutoplay: function(){
 		window.clearInterval(this.shuffleInterval);
 	},
-	deleteProjects: function(){
-    	var self = this;
-    	this.cow.projectStore().loaded.then(function(){
-    		self.cow.projects().filter(function(d){
-    			return !d.deleted();
-    		}).forEach(function(d){
-    			d.deleted(true).sync();
-    		});
-    	});
-    },
+	
     
 
 });

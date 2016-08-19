@@ -8,6 +8,8 @@
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="./gm-cow-core.html">
 <link rel="import" href="./app-instance.html">
+<link rel="import" href="./app-newproject.html">
+<link rel="import" href="./app-test.html">
 <link rel="import" href="./score-card.html">
 
 <script src="../cowconfigs.js"></script>
@@ -37,22 +39,35 @@
 		</paper-dialog>
 		
 		<h1>Monitor</h1>
-        <h4>Project: [[projectname]]</h4>
-        
-        <div id="cards" class="layout horizontal wrap">
-			<template is="dom-repeat" items="[[teams]]" as="team" sort="_sortByTitle">
-			<div class="layout vertical wrap">
-				<template is="dom-repeat" items="[[scenarios]]" as="scenario" sort="_sortByTitle">
-					<score-card
-						team="[[team._data.name]]"
-						scenario="[[scenario._data.name]]"
-						cow="[[_cow]]"
-						></score-card>
+		<div class='layout horizontal'>
+		<paper-material>
+			<h4>Project: [[projectname]]</h4>
+			<div id="cards" class="layout horizontal wrap">
+				<template is="dom-repeat" items="[[teams]]" as="team" sort="_sortByTitle">
+				<div class="layout vertical wrap">
+					<template is="dom-repeat" items="[[scenarios]]" as="scenario" sort="_sortByTitle">
+						<score-card
+							team="[[team._data.name]]"
+							scenario="[[scenario._data.name]]"
+							cow="[[_cow]]"
+							></score-card>
+					</template>
+					</div>
+					
 				</template>
-				</div>
-				
-			</template>
-        </div>
+			</div>
+		</paper-material>
+		<paper-material class='layout vertical'>
+			<h4>Admin</h4>
+			<app-newproject id='newprojectdialog' cow="[[cow]]"></app-newproject>
+			<paper-button raised on-click='_newProject'>Fill project</paper-button>
+			<paper-button raised on-click='_deleteProjects'>Delete projects</paper-button>
+			<app-test id='test' cow="[[cow]]" teams="[[teams]]" scenarios="[[scenarios]]"></app-test>
+			<paper-item>Test</paper-item>
+			<paper-button raised on-click='_startTest'>Start</paper-button><br>
+			<paper-button raised on-click='_stopTest'>Stop</paper-button><br>
+		</paper-material>
+		</div>
     </template>
 </dom-module>
 <script>
@@ -77,7 +92,25 @@ Polymer({
 			value: true
 		}
 	},
-	
+	_newProject: function(){
+		this.$.newprojectdialog.opened=true;
+	},
+	_deleteProjects: function(){
+    	var self = this;
+    	this.cow.projectStore().loaded.then(function(){
+    		self.cow.projects().filter(function(d){
+    			return !d.deleted();
+    		}).forEach(function(d){
+    			d.deleted(true).sync();
+    		});
+    	});
+    },
+    _startTest: function(){
+    	this.$.test.autoplay();
+    },
+    _stopTest: function(){
+    	this.$.test.stopAutoplay();
+    },
 	_waitForProject: function() {
 		var self =this;
 		this.waiting = true;
