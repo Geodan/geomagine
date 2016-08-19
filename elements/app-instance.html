@@ -273,9 +273,9 @@ Polymer({
             self.progress = self._cowProgress.data('value');
         }
         var project = this._project;
-        var items_needed = project.data('numScenarios') + project.data('numTeams') * (project.data('numEigenschappen') + project.data('numKaartjes') + project.data('numVerbindingen') + project.data('numProgress'));
+        var items_needed =  
+        	(project.data('numEigenschappen') + project.data('numKaartjes') + project.data('numVerbindingen') + project.data('numProgress'));
         this.loadpercentage = (project.items().length / items_needed) * 100;
-
         self._calculateScore();
     },
     _checkPeers: function() {

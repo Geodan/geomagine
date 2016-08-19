@@ -6,6 +6,7 @@
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="./gm-cow-core.html">
 <link rel="import" href="./app-instance.html">
 <link rel="import" href="./app-newproject.html">
@@ -35,9 +36,9 @@
 		  <h2>Paused</h2>
 		  <div>
 
-		  <paper-spinner alt="Loading contacts list" active></paper-spinner>
-		  Project is not (completely) loaded...<br>
-		  Percentage: [[loadpercentage]]
+		  <!--<paper-spinner alt="Loading contacts list" active></paper-spinner>-->
+		  Project is not (completely) loaded... <br>
+		  <paper-progress value="[[loadpercentage]]"></paper-progress>
 		  </div>
 		</paper-dialog>
 		
@@ -49,13 +50,11 @@
 				<template is="dom-repeat" items="[[teams]]" as="team" sort="_sortByTitle">
 				<div class="layout vertical wrap">
 					<template is="dom-repeat" items="[[scenarios]]" as="scenario" sort="_sortByTitle">
-					<!--
 						<score-card
 							team="[[team]]"
 							scenario="[[scenario]]"
 							cow="[[_cow]]"
 							></score-card>
-							-->
 					</template>
 					</div>
 
