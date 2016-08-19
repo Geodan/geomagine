@@ -48,15 +48,15 @@ Polymer({
 				.sync();
 		}
 		
-		this.project_ready.then(function(){
-			self.shuffleInterval = window.setInterval(function(){
-				var rand = Math.floor(self.teams.length * Math.random());
-				var team = self.teams[rand];
-				var rand = Math.floor(self.scenarios.length * Math.random());
-				var scenario = self.scenarios[rand];
-				shuffle(team.data('name'), scenario.data('name'));
-			},100);
-		});
+		
+		self.shuffleInterval = window.setInterval(function(){
+			var rand = Math.floor(self.teams.length * Math.random());
+			var team = self.teams[rand];
+			var rand = Math.floor(self.scenarios.length * Math.random());
+			var scenario = self.scenarios[rand];
+			shuffle(team.data('name'), scenario.data('name'));
+		},100);
+		
 		
 		
 	},

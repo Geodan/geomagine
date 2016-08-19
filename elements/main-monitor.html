@@ -27,14 +27,17 @@
 			type="monitor"
 			teams="{{teams}}"
 			scenarios="{{scenarios}}"
+			loadpercentage="{{loadpercentage}}"
 			project_ready="{{project_ready}}"
         ></app-instance>
         
         <paper-dialog modal opened='[[waiting]]'>
 		  <h2>Paused</h2>
 		  <div>
-		  <paper-spinner alt="Loading project" active></paper-spinner>
-		  Project is not (completely) loaded...
+
+		  <paper-spinner alt="Loading contacts list" active></paper-spinner>
+		  Project is not (completely) loaded...<br>
+		  Percentage: [[loadpercentage]]
 		  </div>
 		</paper-dialog>
 		
