@@ -112,18 +112,18 @@ Polymer({
                     return;
                 }
                 project
-                    .data('numEigenschappen', scenarios.length * teams.length * d3data.length)
-                    .sync();
+                    .data('numEigenschappen', scenarios.length * teams.length * d3data.length);
+                    //.sync();
 
                 var counter = 0;
                 var protoid = new Date().getTime().toString();
 
                 teams.forEach(function(team,j) {
-                    project.items({_id: protoid + counter++}).data('type', 'team').data('name', team).sync();
+                    project.items({_id: protoid + counter++}).data('type', 'team').data('name', team);//.sync();
                 });
 
                 scenarios.forEach(function(scenario,i){
-                    project.items({_id:protoid + counter++}).data('type', 'scenario').data('name', scenario).sync();
+                    project.items({_id:protoid + counter++}).data('type', 'scenario').data('name', scenario);//.sync();
                     teams.forEach(function(team,j){
                         project.items({_id:protoid + counter++})
                         	.data({
@@ -131,7 +131,7 @@ Polymer({
                                 scenario: scenario,
                                 team: team,
                                 value: 0
-                            }).sync();
+                            });//.sync();
                         d3data.forEach(function(d,k){
                             project.items({_id:protoid + counter++})
                             	.data({
@@ -144,7 +144,7 @@ Polymer({
                                     place: d.place,
                                     text: d.text[scenario],
                                     found: false
-                                }).sync();
+                                });//.sync();
                         });
                     });
                 });
@@ -161,7 +161,7 @@ Polymer({
 					}
                     numKaartjes = numKaartjes + teams.length * data.length;
                     if (i === (scenarios.length - 1)) {
-                        project.data('numKaartjes', numKaartjes).sync();
+                        project.data('numKaartjes', numKaartjes);//.sync();
                     }
            			data.forEach(function(d){
 						teams.forEach(function(team){
@@ -174,11 +174,12 @@ Polymer({
 									title: d.name,
 									x_org: d.x,
 									y_org: d.y
-								}).sync();
+								});//.sync();
 						});
 					});
            		});
-           });
+           	});
+			project.itemsStore().sync();
         });
     },
 });

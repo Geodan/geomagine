@@ -55,11 +55,17 @@ Polymer({
         },
         scenarios: {
         	type: Array,
-        	notify: true
+            value: function(){
+                return [];
+            },
+            notify: true
         },
         teams: {
         	type: Array,
-        	notify: true
+            value: function(){
+                return [];
+            },
+            notify: true
         },
         project_ready: { // Promise
             type: Object,
@@ -178,6 +184,7 @@ Polymer({
             self.teams = self._project.data('teams');
             self.scenarios = self._project.data('scenarios');
             console.log('Loading project: ' + self.projectname);
+            self._project.itemStore().sync();
             self._project.itemStore().synced.then(function(){
                 console.log('itemStore synced');
                 self._itemsChanged();
@@ -271,12 +278,14 @@ Polymer({
             self.set('verbindingen.'+i+'._data.naarid',d.data('naarid'));
         });
 
-        var progress = myItems.filter(function (d) {
-            return d.data('type') === 'progress';
-        });
-        if (progress.length > 0) {
-            self._cowProgress = progress[0];
-            self.progress = self._cowProgress.data('value');
+        if (self.type !== 'eerstescherm') {
+            var progress = myItems.filter(function (d) {
+                return d.data('type') === 'progress';
+            });
+            if (progress.length > 0) {
+                self._cowProgress = progress[0];
+                self.progress = self._cowProgress.data('value');
+            }
         }
         var project = this._project;
         var items_needed =  
