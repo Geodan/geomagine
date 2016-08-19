@@ -43,12 +43,12 @@
 		<paper-material>
 			<h4>Project: [[projectname]]</h4>
 			<div id="cards" class="layout horizontal wrap">
-				<template is="dom-repeat" items="[[teams]]" as="team" sort="_sortByTitle">
+				<template is="dom-repeat" items="[[teams]]" as="team">
 				<div class="layout vertical wrap">
-					<template is="dom-repeat" items="[[scenarios]]" as="scenario" sort="_sortByTitle">
+					<template is="dom-repeat" items="[[scenarios]]" as="scenario">
 						<score-card
-							team="[[team._data.name]]"
-							scenario="[[scenario._data.name]]"
+							team="[[team]]"
+							scenario="[[scenario]]"
 							cow="[[_cow]]"
 							></score-card>
 					</template>
@@ -129,16 +129,7 @@ Polymer({
 		//this.instanceReady.then(function(){
 		//    console.log('instance is ready');
 		//});
-	},
-	_sortByTitle: function(a,b){
-        	if (a.data('title') < b.data('title')){
-        		return -1;
-        	} else if (a.data('title') > b.data('title')){
-        		return 1;
-        	} else {
-        		return 0;
-        	}
-    },
+	}
 });
 
 </script>

@@ -173,30 +173,34 @@ Polymer({
             self.teams = self._project.data('teams');
             self.scenarios = self._project.data('scenarios');
             console.log('Loading project: ' + self.projectname);
-            self._itemsChanged();
-            if (!self._project_ready_resolved && self._checkProject()) {
-                resolve();
-            }
-            self._project.itemStore().on('datachange', function () {
+            self._project.itemStore().synced.then(function(){
                 self._itemsChanged();
                 if (!self._project_ready_resolved && self._checkProject()) {
                     resolve();
                 }
+                self._project.itemStore().on('datachange', function () {
+                    self._itemsChanged();
+                    if (!self._project_ready_resolved && self._checkProject()) {
+                        resolve();
+                    }
+                });
             });
             return true;
         }
 
         self._project_ready_resolved = false;
         self.project_ready = new Promise(function(resolve, reject){
-            if (!findProject(resolve)) {
+            self.cow.projectStore().synced.then(function() {
+                if (!findProject(resolve)) {
 
-                // project is not yet loaded, wait for it...
-                self.cow.projectStore().on('datachange', function() {
-                    if (findProject(resolve)) {
-                        self.cow.projectStore().off('datachange'); // disable event listener when project is found
-                    }
-                });
-            }
+                    // project is not yet loaded, wait for it...
+                    self.cow.projectStore().on('datachange', function () {
+                        if (findProject(resolve)) {
+                            self.cow.projectStore().off('datachange'); // disable event listener when project is found
+                        }
+                    });
+                }
+            });
         }).then(function(){
             self._project_ready_resolved = true;
         })
