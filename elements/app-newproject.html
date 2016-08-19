@@ -13,7 +13,7 @@
     <template>
 		<style is="custom-style" include="iron-flex iron-flex-alignment">
 		</style>
-		<paper-dialog opened modal>
+		<paper-dialog modal opened={{opened}}>
 			<h2>New project</h2>
 			<div class='content'>
 				<paper-input id='projectname' label="Projectname"></paper-input>
@@ -24,23 +24,25 @@
 						</template>
 					  </paper-listbox>
 				</paper-dropdown-menu>
+				<div class='layout horizontal'>
 				<div>
-				<h4>Teams:</h4>
-				<paper-listbox>
-					<template is='dom-repeat' items='[[teams]]'>
-						<paper-item>[[item]]</paper-item>
-					</template>
-				</paper-listbox>
-				</div>
-				<div>
-				<h4>Scenarios:</h4>
-				<paper-listbox>
-					<template is='dom-repeat' items='[[scenarios]]'>
-						<paper-item>[[item]]</paper-item>
-					</template>
-				</paper-listbox>
+					<h4>Teams:</h4>
+					<paper-listbox>
+						<template is='dom-repeat' items='[[teams]]'>
+							<paper-item>[[item]]</paper-item>
+						</template>
+					</paper-listbox>
 				</div>
 				
+				<div>
+					<h4>Scenarios:</h4>
+					<paper-listbox>
+						<template is='dom-repeat' items='[[scenarios]]'>
+							<paper-item>[[item]]</paper-item>
+						</template>
+					</paper-listbox>
+				</div>
+				</div>
 			<div class="buttons">
 				<paper-button dialog-dismiss>Cancel</paper-button>
 				<paper-button dialog-confirm autofocus on-click='_newProject'>Accept</paper-button>
@@ -79,6 +81,8 @@ Polymer({
 	_templateChanged: function(i, templates){
 		this.teams = templates[i].teams;
 		this.scenarios = templates[i].scenarios;
+		this.eigenschappenfile = templates[i].eigenschappenfile;
+		this.kaartjesfiles = templates[i].kaartjesfiles;
 	},
 	_newProject: function() {
         var self = this;
@@ -101,7 +105,7 @@ Polymer({
                     numProgress: scenarios.length * teams.length
             }).sync();
             console.log('Filling new project...');
-            d3.json('./data/properties.json',function(err,d3data){
+            d3.json('./data/'+self.eigenschappenfile,function(err,d3data){
                 if (err){
                     //console.warn('data length: ' + d3data.length);
                     console.warn(err);
