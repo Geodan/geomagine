@@ -1,12 +1,14 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="./app-instance.html">
 
 <dom-module id="score-card">
     <template>
     <app-instance
 		cow="[[cow]]"
-		team="[[team]]"
-		scenario="[[scenario]]"
+		team="{{team}}"
+		scenario="{{scenario}}"
 		type="monitor"
 		progress="{{progress}}"
 		project_ready="{{project_ready}}"
@@ -14,14 +16,21 @@
 		xscore="{{xscore}}"
 		yscore="{{yscore}}"
 		score="{{score}}"
+		eerstescherm_online="{{eerstescherm_online}}"
+		tweedescherm_online="{{tweedescherm_online}}"
 	></app-instance>
     <paper-card>
     	<div class="card-content">
 			[[team]]<br>
 			[[scenario]]<br>
 			[[progress]]<br>
-			[[score]]
-			
+			[[score]]<br>
+			<template is='dom-if' if='[[eerstescherm_online]]'>
+				<iron-icon icon='image:looks-one'></iron-icon>
+			</template>
+			<template is='dom-if' if='[[tweedescherm_online]]'>
+				<iron-icon icon='image:looks-two'></iron-icon>
+			</template>
 		</div>
 		
 		
@@ -39,6 +48,8 @@ Polymer({
 		team: String,
 		scenario: String,
 		progress: Number,
+		eerstescherm_online: Boolean,
+		tweedescherm_online: Boolean,
 		project_ready: {
 			type: Object,
 			observer: '_waitForProject'
