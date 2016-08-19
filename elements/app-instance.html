@@ -65,6 +65,11 @@ Polymer({
             type: Object,
             notify: true
         },
+        loadpercentage: {
+        	type: Number,
+        	notify: true,
+        	value: 0
+        },
         eventscore: {
         	type: Number,
         	notify: true,
@@ -151,7 +156,7 @@ Polymer({
     },
     _waitForProject: function() {
         var self = this;
-
+        this.loadpercentage = 0;
         function findProject(resolve) {
             var projects = self.cow.projects().filter(function (d) {
                 return !d.deleted();
@@ -273,6 +278,9 @@ Polymer({
             self._cowProgress = progress[0];
             self.progress = self._cowProgress.data('value');
         }
+        var project = this._project;
+        var items_needed = project.data('numScenarios') + project.data('numTeams') + project.data('numEigenschappen') + project.data('numKaartjes') + project.data('numVerbindingen') + project.data('numProgress');
+        this.loadpercentage = (myItems.length / items_needed) * 100;
 
         self._calculateScore();
     },

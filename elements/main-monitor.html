@@ -27,6 +27,7 @@
 			type="monitor"
 			teams="{{teams}}"
 			scenarios="{{scenarios}}"
+			loadpercentage="{{loadpercentage}}"
 			project_ready="{{project_ready}}"
         ></app-instance>
         
@@ -34,7 +35,8 @@
 		  <h2>Paused</h2>
 		  <div>
 		  <paper-spinner alt="Loading contacts list" active></paper-spinner>
-		  Project is not (completely) loaded...
+		  Project is not (completely) loaded...<br>
+		  Percentage: [[loadpercentage]]
 		  </div>
 		</paper-dialog>
 		
@@ -46,11 +48,13 @@
 				<template is="dom-repeat" items="[[teams]]" as="team" sort="_sortByTitle">
 				<div class="layout vertical wrap">
 					<template is="dom-repeat" items="[[scenarios]]" as="scenario" sort="_sortByTitle">
+					<!--
 						<score-card
 							team="[[team._data.name]]"
 							scenario="[[scenario._data.name]]"
 							cow="[[_cow]]"
 							></score-card>
+							-->
 					</template>
 					</div>
 					
