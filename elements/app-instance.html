@@ -278,15 +278,16 @@ Polymer({
             self.set('verbindingen.'+i+'._data.naarid',d.data('naarid'));
         });
 
-        if (self.type !== 'eerstescherm') {
-            var progress = myItems.filter(function (d) {
-                return d.data('type') === 'progress';
-            });
-            if (progress.length > 0) {
-                self._cowProgress = progress[0];
+        var progress = myItems.filter(function (d) {
+            return d.data('type') === 'progress';
+        });
+        if (progress.length > 0) {
+            self._cowProgress = progress[0];
+            if (self.type !== 'eerstescherm') {
                 self.progress = self._cowProgress.data('value');
             }
         }
+
         var project = this._project;
         var items_needed =  
         	(project.data('numEigenschappen') + project.data('numKaartjes') + project.data('numVerbindingen') + project.data('numProgress'));
@@ -383,6 +384,7 @@ Polymer({
         });
     },
     setProgress: function(progress){
+        console.log('setProgress');
         var self = this;
         this.project_ready.then(function() {
             self._cowProgress.data('value', progress).sync();
