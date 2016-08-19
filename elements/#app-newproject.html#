@@ -1,0 +1,181 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<dom-module id="app-newproject">
+    <template>
+		<style is="custom-style" include="iron-flex iron-flex-alignment">
+		</style>
+		<paper-dialog opened modal>
+			<h2>New project</h2>
+			<div class='content'>
+				<paper-input id='projectname' label="Projectname"></paper-input>
+				<paper-dropdown-menu label="Template">
+					  <paper-listbox class="dropdown-content" id="templates" selected="{{selectedtemplate}}">
+						<template is='dom-repeat' items='[[templates]]'>
+							<paper-item name="[[item.id]]">[[item.name]]</paper-item>
+						</template>
+					  </paper-listbox>
+				</paper-dropdown-menu>
+				<div class='horizontal'>
+				<h4>Teams:</h4>
+				<paper-listbox>
+					<template is='dom-repeat' items='[[teams]]'>
+						<paper-item>[[item]]</paper-item>
+					</template>
+				</paper-listbox>
+				</div>
+				<div>
+				<h4>Scenarios:</h4>
+				<paper-listbox>
+					<template is='dom-repeat' items='[[scenarios]]'>
+						<paper-item>[[item]]</paper-item>
+					</template>
+				</paper-listbox>
+				</div>
+				
+			<div class="buttons">
+				<paper-button dialog-dismiss>Cancel</paper-button>
+				<paper-button dialog-confirm autofocus on-click='_newProject'>Accept</paper-button>
+			</div>
+		</paper-dialog>
+	</template>
+</dom-module>
+
+<script>
+
+Polymer({
+	is: 'app-newproject',
+	properties: {
+		templates: Array,
+		teams: Array,
+		scenarios: Array,
+		cow: Object,
+		selectedtemplate: {
+			value: 0,
+			type: Number
+		}
+	},
+	observers: [
+		'_templateChanged(selectedtemplate,templates)'
+	],
+	ready: function(){
+		var self = this;
+		d3.json('./data/templates.json', function(err,data){
+			if (err){
+				console.warn(err);
+				return;
+			}
+			self.templates = data;
+		});
+	},
+	_templateChanged: function(i, templates){
+		this.teams = templates[i].teams;
+		this.scenarios = templates[i].scenarios;
+	},
+	_newProject: function() {
+        var self = this;
+
+        console.log('starting project fill');
+        var scenarios = this.scenarios;
+        var teams = this.teams;
+
+        this.cow.projectStore().loaded.then(function(){
+            var project = self.cow.projects({}).sync();
+            project.data({
+            		name: self.$.projectname.value || 'noname',
+            		teams: teams,
+            		scenarios: scenarios,
+            		numScenarios: scenarios.length,
+                    numTeams: teams.length,
+                    numEigenschappen: 9999999,
+                    numKaartjes: 9999999,
+                    numVerbindingen: 0,
+                    numProgress: scenarios.length * teams.length
+            }).sync();
+            console.log('Filling new project...');
+            d3.json('./data/properties.json',function(err,d3data){
+                if (err){
+                    //console.warn('data length: ' + d3data.length);
+                    console.warn(err);
+                    return;
+                }
+                project
+                    .data('numEigenschappen', scenarios.length * teams.length * d3data.length)
+                    .sync();
+
+                var counter = 0;
+                var protoid = new Date().getTime().toString();
+
+                teams.forEach(function(team,j) {
+                    project.items({_id: protoid + counter++}).data('type', 'team').data('name', team).sync();
+                });
+
+                scenarios.forEach(function(scenario,i){
+                    project.items({_id:protoid + counter++}).data('type', 'scenario').data('name', scenario).sync();
+                    teams.forEach(function(team,j){
+                        project.items({_id:protoid + counter++})
+                        	.data({
+                        		type: 'progress',
+                                scenario: scenario,
+                                team: team,
+                                value: 0
+                            }).sync();
+                        d3data.forEach(function(d,k){
+                            project.items({_id:protoid + counter++})
+                            	.data({
+                            		type: 'eigenschap',
+                                    scenario: scenario,
+                                    team: team,
+                                    num: k,
+                                    title: d.title,
+                                    img: d.img,
+                                    place: d.place,
+                                    text: d.text[scenario],
+                                    found: false
+                                }).sync();
+                        });
+                    });
+                });
+            });
+            var counter = 0;
+            var protoid = new Date().getTime().toString();
+            var numKaartjes = 0;
+            scenarios.forEach(function(scenario, i){
+           		d3.tsv('./data/'+scenario+'.tsv',function(err,data){
+           			if (err){
+						//console.warn('data length: ' + d3data.length);
+						console.warn(err);
+						return;
+					}
+                    numKaartjes = numKaartjes + teams.length * data.length;
+                    if (i === (scenarios.length - 1)) {
+                        project.data('numKaartjes', numKaartjes).sync();
+                    }
+           			data.forEach(function(d){
+						teams.forEach(function(team){
+							project.items({_id:protoid + counter++})
+								.data({
+									type: 'kaartje',
+									scenario: scenario,
+									team: team,
+									num: d.id,
+									title: d.name,
+									x_org: d.x,
+									y_org: d.y
+								}).sync();
+						});
+					});
+           		});
+           });
+        });
+    },
+});
+</script>

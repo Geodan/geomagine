@@ -1,0 +1,11 @@
+[{
+	"id": 1,
+	"name": "default",
+	"teams": ["Team 1","Team 2", "Team 3","Team 4"],
+	"scenarios": ["Scenario A", "Scenario B", "Scenario C", "Scenario D"]
+},{
+	"id": 2,
+	"name": "Steden van de toekomst",
+	"teams": ["Team 1","Team 2", "Team 3","Team 4"],
+	"scenarios": ["Groene stad", "Cyclische stad", "Onbegrensde stad", "Geplande stad"]
+}]
