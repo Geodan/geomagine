@@ -105,82 +105,93 @@ Polymer({
                     numProgress: scenarios.length * teams.length
             }).sync();
             console.log('Filling new project...');
-            d3.json('./data/'+self.eigenschappenfile,function(err,d3data){
-                if (err){
-                    //console.warn('data length: ' + d3data.length);
-                    console.warn(err);
-                    return;
-                }
-                project
-                    .data('numEigenschappen', scenarios.length * teams.length * d3data.length);
-                    //.sync();
 
-                var counter = 0;
-                var protoid = new Date().getTime().toString();
-
-                teams.forEach(function(team,j) {
-                    project.items({_id: protoid + counter++}).data('type', 'team').data('name', team);//.sync();
-                });
-
-                scenarios.forEach(function(scenario,i){
-                    project.items({_id:protoid + counter++}).data('type', 'scenario').data('name', scenario);//.sync();
-                    teams.forEach(function(team,j){
-                        project.items({_id:protoid + counter++})
-                        	.data({
-                        		type: 'progress',
-                                scenario: scenario,
-                                team: team,
-                                value: 0
-                            });//.sync();
-                        d3data.forEach(function(d,k){
-                            project.items({_id:protoid + counter++})
-                            	.data({
-                            		type: 'eigenschap',
-                                    scenario: scenario,
-                                    team: team,
-                                    num: k,
-                                    title: d.title,
-                                    img: d.img,
-                                    place: d.place,
-                                    text: d.text[scenario],
-                                    found: false
-                                });//.sync();
-                        });
-                    });
-                });
-            });
-            var counter = 0;
-            var protoid = new Date().getTime().toString();
-            var numKaartjes = 0;
-            scenarios.forEach(function(scenario, i){
-           		d3.tsv('./data/'+scenario+'.tsv',function(err,data){
-           			if (err){
-						//console.warn('data length: ' + d3data.length);
+			var fill_promises = [];
+			fill_promises.push(new Promise(function(resolve, reject){
+				d3.json('./data/'+self.eigenschappenfile,function(err,d3data){
+					if (err){
 						console.warn(err);
+						reject(err);
 						return;
 					}
-                    numKaartjes = numKaartjes + teams.length * data.length;
-                    if (i === (scenarios.length - 1)) {
-                        project.data('numKaartjes', numKaartjes);//.sync();
-                    }
-           			data.forEach(function(d){
-						teams.forEach(function(team){
+					project.data('numEigenschappen', scenarios.length * teams.length * d3data.length).sync();
+
+					var counter = 0;
+					var protoid = new Date().getTime().toString();
+
+					/*teams.forEach(function(team,j) {
+						project.items({_id: protoid + counter++}).data('type', 'team').data('name', team).sync();
+					});*/
+
+					scenarios.forEach(function(scenario,i){
+						//project.items({_id:protoid + counter++}).data('type', 'scenario').data('name', scenario);//.sync();
+						teams.forEach(function(team,j){
 							project.items({_id:protoid + counter++})
 								.data({
-									type: 'kaartje',
+									type: 'progress',
 									scenario: scenario,
 									team: team,
-									num: d.id,
-									title: d.name,
-									x_org: d.x,
-									y_org: d.y
+									value: 0
 								});//.sync();
+							d3data.forEach(function(d,k){
+								project.items({_id:protoid + counter++})
+									.data({
+										type: 'eigenschap',
+										scenario: scenario,
+										team: team,
+										num: k,
+										title: d.title,
+										img: d.img,
+										place: d.place,
+										text: d.text[scenario],
+										found: false
+									});//.sync();
+							});
 						});
 					});
-           		});
-           	});
-			project.itemsStore().sync();
+					resolve();
+				});
+			}));
+
+			var counter = 0;
+			var protoid = new Date().getTime().toString();
+			scenarios.forEach(function (scenario, i) {
+				fill_promises.push(new Promise(function(resolve, reject){
+					d3.tsv('./data/' + scenario + '.tsv', function (err, data) {
+						if (err) {
+							//console.warn('data length: ' + d3data.length);
+							console.warn(err);
+							reject(err);
+							return;
+						}
+						project.data('numKaartjes', scenarios.length * teams.length * data.length).sync();
+						data.forEach(function (d) {
+							teams.forEach(function (team) {
+								project.items({_id: protoid + counter++})
+										.data({
+											type: 'kaartje',
+											scenario: scenario,
+											team: team,
+											num: d.id,
+											title: d.name,
+											x_org: d.x,
+											y_org: d.y
+										});//.sync();
+							});
+						});
+						resolve();
+					});
+				}));
+			});
+
+			Promise.all(fill_promises).then(function(){
+				console.log('succes filling project items: ' + project.items().length);
+				project.itemStore().sync();
+			}).catch(function(err) {
+				console.log('error filling project items: ' + err);
+			});
+
         });
-    },
+    }
 });
 </script>
