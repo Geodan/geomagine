@@ -132,7 +132,7 @@ Polymer({
 									scenario: scenario,
 									team: team,
 									value: 0
-								});//.sync();
+								}).sync();
 							d3data.forEach(function(d,k){
 								project.items({_id:protoid + counter++})
 									.data({
@@ -145,7 +145,7 @@ Polymer({
 										place: d.place,
 										text: d.text[scenario],
 										found: false
-									});//.sync();
+									}).sync();
 							});
 						});
 					});
@@ -176,7 +176,7 @@ Polymer({
 											title: d.name,
 											x_org: d.x,
 											y_org: d.y
-										});//.sync();
+										}).sync();
 							});
 						});
 						resolve();
@@ -186,7 +186,7 @@ Polymer({
 
 			Promise.all(fill_promises).then(function(){
 				console.log('succes filling project items: ' + project.items().length);
-				project.itemStore().sync();
+				//project.itemStore().sync();
 			}).catch(function(err) {
 				console.log('error filling project items: ' + err);
 			});
