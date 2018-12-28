@@ -1,0 +1,148 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="app-instance2">
+    <template>
+    </template>
+</dom-module>
+<script>
+
+Polymer({
+    is: 'app-instance2',
+    properties:{
+    	cow: {
+            type: Object,
+            observer: '_cowChanged'
+        },
+        projectname: {
+        	type: String,
+        	notify: true
+        }
+    },
+    _cowChanged: function(cow){
+    	var self = this;
+        this._waitForProject();
+    },
+    _instantiateItems: function(){
+    	var grouped = d3.nest().key(function(d){
+    		return d.data('team');	
+    	}).key(function(d){
+    		return d.data('scenario');
+    	}).key(function(d){
+    		return d.data('type');
+    	}).map(this._project.items());
+    	
+    	
+    	if (grouped.has(this.team) && grouped.get(this.team).has(this.scenario)){ 
+			var myItems = grouped.get(this.team).get(this.scenario);
+			this.eigenschappen = myItems.get('eigenschap');
+			this.kaartjes = myItems.get('kaartje');
+			this.verbindingen = myItems.get('verbinding');
+			this._itemsChanged();
+		}
+    },
+    _itemsChanged: function(){
+    	// make sure Polymer listeners are triggered
+        self.eigenschappen.forEach(function(d,i){
+            self.set('eigenschappen.'+i+'._data.found',d.data('found'));
+        });
+    	// make sure Polymer listeners are triggered
+        self.kaartjes.forEach(function(d,i){
+            self.set('kaartjes.'+i+'._data.x',d.data('x'));
+            self.set('kaartjes.'+i+'._data.y',d.data('y'));
+        });
+    	// make sure Polymer listeners are triggered
+        self.verbindingen.forEach(function(d,i){
+            self.set('verbindingen.'+i+'._data.vanid',d.data('vanid'));
+            self.set('verbindingen.'+i+'._data.naarid',d.data('naarid'));
+        });
+        
+        var progress = myItems.filter(function (d) {
+            return d.data('type') === 'progress';
+        });
+        if (progress.length > 0) {
+            self._cowProgress = progress[0];
+            if (self.type !== 'eerstescherm') {
+                self.progress = self._cowProgress.data('value');
+            }
+        }
+
+        
+        self._calculateScore();
+        
+    },
+    /**
+    * Start waiting for the project to be available and to be filled
+    **/
+    _waitForProject: function() {
+        var self = this;
+        this.loadpercentage = 0;
+        //checkProject() checks if the itemstore is filled with the correct items
+        function checkProject(){
+			if (!self._project) {
+				return false;
+			}
+	
+			var project = self._project;
+			var items = project.items();
+	
+			return items.filter(function(d) { return d.data('type') === 'eigenschap' }).length === project.data('numEigenschappen') &&
+					items.filter(function(d) { return d.data('type') === 'kaartje' }).length === project.data('numKaartjes') &&
+					items.filter(function(d) { return d.data('type') === 'verbinding' }).length === project.data('numVerbindingen') &&
+					items.filter(function(d) { return d.data('type') === 'progress' }).length === project.data('numProgress');
+        }
+        //findProject(resolve) tries to find the active project
+        function findProject(resolve) {
+            var projects = self.cow.projects().filter(function (d) {
+                return !d.deleted();
+            });
+            if (projects.length === 0) {
+                return false;
+            } else if (projects.length > 1) {
+                projects.sort(function (a, b) {
+                    return b.created() - a.created();
+                });
+            }
+            self._project = projects[0];
+            self.cow.project(self._project.id());//set default cow project
+            self.projectname = self._project.data('name') || 'unknown';
+            self.teams = self._project.data('teams');
+            self.scenarios = self._project.data('scenarios');
+            var project = self._project;
+            var items_needed = project.data('numEigenschappen') + project.data('numKaartjes') + project.data('numVerbindingen') + project.data('numProgress');
+            self._project.itemStore().sync();//FIXME: this doesn't work for alpha peer
+            self._project.itemStore().synced.then(function(){
+                if (!self._project_ready_resolved && checkProject()) {
+                	self._instantiateItems();
+                    resolve();
+                }
+                self._project.itemStore().on('datachange', function () {
+					self.loadpercentage = (project.items().length / items_needed) * 100;
+                    if (!self._project_ready_resolved && checkProject()) {
+                    	self._instantiateItems();
+                        resolve();
+                    }
+                });
+            });
+            return true;
+        }
+
+        this._project_ready_resolved = false;
+        this.project_ready = new Promise(function(resolve, reject){
+            self.cow.projectStore().synced.then(function() {
+                if (!findProject(resolve)) {
+                    // project is not yet loaded, wait for it...
+                    self.cow.projectStore().on('datachange', function () {
+                        if (findProject(resolve)) {
+                            self.cow.projectStore().off('datachange'); // disable event listener when project is found
+                        }
+                    });
+                }
+            });
+        }).then(function(){
+            self._project_ready_resolved = true;
+        })
+    },
+    ready: function(){
+    }
+});
+</script>

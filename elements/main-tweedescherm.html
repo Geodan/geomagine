@@ -37,6 +37,7 @@
 			projectname="{{projectname}}"
 			type="tweedescherm"
 			project_ready="{{project_ready}}"
+			loadpercentage="{{loadpercentage}}"
 			eigenschappen="{{eigenschappen}}"
         ></app-instance>
         
@@ -44,6 +45,7 @@
 		  <h2>Paused</h2>
 		  <div>
 		  <paper-spinner alt="Loading contacts list" active></paper-spinner>
+		  <paper-progress value="[[loadpercentage]]"></paper-progress>
 		  Project is not (completely) loaded...
 		  </div>
 		</paper-dialog>

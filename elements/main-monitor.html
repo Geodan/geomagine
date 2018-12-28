@@ -8,6 +8,7 @@
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="./gm-cow-core.html">
+<link rel="import" href="./app-instance2.html">
 <link rel="import" href="./app-instance.html">
 <link rel="import" href="./app-newproject.html">
 <link rel="import" href="./app-test.html">
@@ -19,7 +20,7 @@
 		<style is="custom-style" include="iron-flex iron-flex-alignment">
 		</style>
         <gm-cow-core id="cowcore" config="[[cowconfig]]" core="{{_cow}}"></gm-cow-core>
-        <app-instance
+        <app-instance2
 			id="maininstance"
 			cow="[[_cow]]"
 			team="xx"
@@ -30,18 +31,18 @@
 			scenarios="{{scenarios}}"
 			loadpercentage="{{loadpercentage}}"
 			project_ready="{{project_ready}}"
-        ></app-instance>
-        
-        <!--<paper-dialog modal opened='[[waiting]]'>
+        ></app-instance2>
+        <!--
+        <paper-dialog modal opened='[[waiting]]'>
 		  <h2>Paused</h2>
 		  <div>
-		-->
+		
 		  <!--<paper-spinner alt="Loading contacts list" active></paper-spinner>-->
 		<!--Project is not (completely) loaded... <br>
         <paper-progress value="[[loadpercentage]]"></paper-progress>
         </div>
-      </paper-dialog>-->
-		
+      </paper-dialog>
+		-->
 		<h1>Monitor</h1>
 		<div class='layout horizontal'>
 		<paper-material>
@@ -50,11 +51,11 @@
 				<template is="dom-repeat" items="[[teams]]" as="team">
 				<div class="layout vertical wrap">
 					<template is="dom-repeat" items="[[scenarios]]" as="scenario">
-						<score-card
+						<score-cardx
 							team="[[team]]"
 							scenario="[[scenario]]"
 							cow="[[_cow]]"
-							></score-card>
+							></score-cardx>
 					</template>
 					</div>
 

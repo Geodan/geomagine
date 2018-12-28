@@ -6,6 +6,7 @@
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-progress/paper-progress.html">
 
 <link rel="import" href="./app-instance.html">
 <link rel="import" href="./gm-cow-core.html">
@@ -37,6 +38,7 @@
 			scenarios="{{scenarios}}"
 			projectname="{{projectname}}"
 			type="eerstescherm"
+			loadpercentage="{{loadpercentage}}"
 			project_ready="{{project_ready}}"
 			kaartjes="{{kaartjes}}"
         ></app-instance>
@@ -44,6 +46,7 @@
         <paper-dialog modal opened='[[waiting]]'>
 		  <h2>Paused</h2>
 		  <div>
+		  <paper-progress value="[[loadpercentage]]"></paper-progress>
 		  <paper-spinner alt="Loading contacts list" active></paper-spinner>
 		  Project is not (completely) loaded...
 		  </div>

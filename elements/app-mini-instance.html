@@ -242,7 +242,7 @@ Polymer({
         if (!this._project || !this.team || !this.scenario) {
             return;
         }
-        
+
         var myItems = self._project.items().filter(function(d){
             return !d.deleted() && d.data('team') === self.team && d.data('scenario') === self.scenario;
         });

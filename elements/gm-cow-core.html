@@ -27,7 +27,6 @@ Polymer({
     	}
 	},
     _configChanged: function(config){
-		console.log('gm-cow-core _configChanged');
     	var core = new Cow.core({
     		herdname: this.config.key, 
     		maxage: 1000 * 60 * 60 * 10 * 1 //10 uur maxage
@@ -47,10 +46,9 @@ Polymer({
 		this.connect();//todo: make optional
     },
     ready: function(){
-		console.log('gm-cow-core ready');
+		
     },
     connect: function(){
-		console.log('gm-cow-core connect');
 		var self = this;
 		return this.core.connect().then(function(d){
 			//todo, add event;
